@@ -32,7 +32,7 @@
  * @file    MUSICMAKER.c
  * @brief   Application entry point.
  */
-#include <MusicMaker/top/topHeaders/toplevel.h>
+#include "top/topHeaders/toplevel.h"
 #include <stdio.h>
 #include "board.h"
 #include "peripherals.h"
