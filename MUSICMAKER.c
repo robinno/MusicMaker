@@ -32,6 +32,7 @@
  * @file    MUSICMAKER.c
  * @brief   Application entry point.
  */
+#include <MusicMaker/top/topHeaders/toplevel.h>
 #include <stdio.h>
 #include "board.h"
 #include "peripherals.h"
@@ -40,7 +41,7 @@
 #include "MK64F12.h"
 #include "fsl_debug_console.h"
 /* TODO: insert other include files here. */
-#include "source/top/headerfiles/toplevel.h"
+
 
 /* TODO: insert other definitions and declarations here. */
 
