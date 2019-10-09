@@ -40,6 +40,7 @@
 #include "MK64F12.h"
 #include "fsl_debug_console.h"
 /* TODO: insert other include files here. */
+#include "source/top/headerfiles/toplevel.h"
 
 /* TODO: insert other definitions and declarations here. */
 
@@ -55,7 +56,8 @@ int main(void) {
   	/* Init FSL debug console. */
     BOARD_InitDebugConsole();
 
-    PRINTF("Hello World\n");
+    PRINTF("Init finished\n");
+    toplevel();
 
     /* Force the counter to be placed into memory. */
     volatile static int i = 0 ;
