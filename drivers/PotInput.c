@@ -6,10 +6,10 @@ void initPot() {
 	SIM->SCGC5 |= 0x0400; //system clockgating for block B
 	GPIOB->PDDR |= (0 << 2);   //set pin 2 as input
 
-	///ADC:
+	//ADC:
 	SIM->SCGC6 |= (1<<27); // enable the ADC clock
 
-	///ADC config:
+	//ADC configuration:
 	//mode : "0b11" =single ended 16bit conversion with 2's complement
 	//mode field = bit 3 and 2 of ADCx_CGF1
 	ADC0->CFG1 |= 0xC; //sets ADC to 16bit

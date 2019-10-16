@@ -12,7 +12,7 @@ void toplevel() {
 
 	while(1){
 		delay();
-		printf("%i", getPotInput());
+		printf("%i\n\r", getPotInput());
 	}
 
 //	SIM->SCGC5 |= 0x400; //enable Port B Clock Gate Control
