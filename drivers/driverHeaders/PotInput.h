@@ -3,4 +3,4 @@
 
 
 void initPot();
-int32_t getPotInput();
+uint16_t getPotInput();
