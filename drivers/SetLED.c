@@ -1,4 +1,4 @@
-#include "./driverHeaders/setLED.h"
+#include "driverHeaders/setLED.h"
 
 int initLED(){
 	SIM->SCGC5 |= 0x400; //enable Port B Clock Gate Control

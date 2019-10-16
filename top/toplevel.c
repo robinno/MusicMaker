@@ -8,6 +8,13 @@ void delay() {
 void toplevel() {
 	printf("in toplevel \n\r");
 
+	initPot();
+
+	while(1){
+		delay();
+		printf("%i", getPotInput());
+	}
+
 //	SIM->SCGC5 |= 0x400; //enable Port B Clock Gate Control
 //	PORTB->PCR[21] = 0x100; //blue led, configured as Alternative 1 (GPIO)
 //	GPIOB->PDDR |= (1 << 21); //setting the bit 21 of the port B as output

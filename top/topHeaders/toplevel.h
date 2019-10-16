@@ -3,5 +3,6 @@
 
 //TEMPORARY INCLUDES
 #include "drivers/driverHeaders/SetLED.h"
+#include "drivers/driverHeaders/PotInput.h"
 
 void toplevel();
