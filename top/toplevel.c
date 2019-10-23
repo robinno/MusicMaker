@@ -5,10 +5,15 @@ void delay() {
 	}
 }
 
-void toplevel() {
-	printf("in toplevel\n");
+void inits(){
 	initLED();
 	DAC0_init();
+}
+
+void toplevel() {
+	printf("in toplevel\n");
+
+	inits();
 
 	/*
 	//blue LED app-shield
@@ -30,7 +35,7 @@ void toplevel() {
 		delay();
 	}
 */
-
+/*
 	printf("begin aan DAC test\n");
 	uint16_t waarde = 0;
 	while(1){
@@ -40,6 +45,7 @@ void toplevel() {
 		printf("set!\n");
 		delay();
 	}
+*/
 }
 
 /*
