@@ -35,8 +35,9 @@ void toplevel() {
 	uint16_t waarde = 0;
 	while(1){
 		scanf("%i", &waarde);
-		printf("setting value of DAC to %i", waarde);
+		printf("setting value of DAC to %i\n", waarde);
 		DAC0_set(waarde);
+		printf("set!\n");
 		delay();
 	}
 }

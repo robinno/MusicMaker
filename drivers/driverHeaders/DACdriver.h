@@ -3,4 +3,4 @@
 
 void DAC0_init();
 
-void DAC0_set(uint16_t value);
+void DAC0_set(uint16_t value); //Value = between 0 and 4095!! (12 bit)
