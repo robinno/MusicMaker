@@ -2,7 +2,7 @@
 
 int initJoyStick(){
 	printf("d1 ");
-	//mux alt1 GPIO, set interupt on rising edge (IRQS)
+	//mux alt1 GPIO, set interrupt on rising edge (IRQS)
 	PORTB->PCR[10] |= (1<<8);
 	PORTB->PCR[10] |= (9<<16);
 
