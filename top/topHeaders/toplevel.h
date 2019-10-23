@@ -2,6 +2,7 @@
 #include "fsl_debug_console.h"
 
 //TEMPORARY INCLUDES
-#include "drivers/driverHeaders/SetLED.h"
+#include "../../drivers/driverHeaders/SetLED.h"
+#include "../../drivers/driverHeaders/JoystickInput.h"
 
 void toplevel();

@@ -7,16 +7,30 @@ void delay() {
 
 void toplevel() {
 	printf("in toplevel \n\r");
+	initLED();
 
-//	SIM->SCGC5 |= 0x400; //enable Port B Clock Gate Control
-//	PORTB->PCR[21] = 0x100; //blue led, configured as Alternative 1 (GPIO)
-//	GPIOB->PDDR |= (1 << 21); //setting the bit 21 of the port B as output
-//	GPIOB->PDOR = (0 << 21); //turn off blue led
-//	printf("print some debugging info, can be seen in console window.\n\r");
-//	while (1) {
-//		GPIOB->PDOR = (0 << 21); //turn off blue led
-//		delay();
-//		GPIOB->PDOR = (1 << 21); //turn on blue led
-//		delay();
-//	}
+	//blue LED app-shield
+	SIM->SCGC5 |= (1 << 11);
+	PORTC->PCR[4] |= (1 << 8);
+	GPIOC->PDDR |= (1 << 4);
+	//GPIOC->PTOR |= (1 << 4); //toggle blue
+	delay();
+
+	//initJoyStick();
+	PORTB->PCR[10] |= (1 << 8);
+	GPIOB->PDDR &= !(1 << 10);
+	PORTB->PCR[10] |= (9 << 16);
+	PORTB->ISFR &= !(1 << 10);
+	NVIC_EnableIRQ(60);
+
+	printf("while started\n");
+	while (1) {
+		delay();
+	}
+
+}
+
+void PORTB_IRQHandler(void) {
+	GPIOC->PTOR |= (1 << 4);//toggle blue led
+	PORTB->ISFR &= !(1 << 10);
 }
