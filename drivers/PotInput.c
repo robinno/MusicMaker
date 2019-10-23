@@ -1,5 +1,4 @@
 #include "driverHeaders/PotInput.h"
-#include "MK64F12.h"
 
 void initPot() {
 	//Set GPIO pin as input
