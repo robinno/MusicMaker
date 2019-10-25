@@ -1,8 +1,24 @@
-#include "./topHeaders/toplevel.h"
+#include "topHeaders/toplevel.h"
 
 void delay() {
 	for (long i = 0; i < 1000000; i++) {
 	}
+}
+
+void c10(void) {
+	printf("c10\n");
+}
+void b10(void) {
+	printf("b10\n");
+}
+void b23(void) {
+	printf("b23\n");
+}
+void c11(void) {
+	printf("c11\n");
+}
+void b11(void) {
+	printf("b11\n");
 }
 
 void toplevel() {
@@ -16,23 +32,27 @@ void toplevel() {
 	setLED_C(12, 1);
 	printf("all leds off\n");
 
-	PORTB->PCR[10] |= (1 << 8); //mux alt1
-	GPIOB->PDDR &= ~(1 << 10); //port direction
-	PORTB->PCR[10] |= (9 << 16); //Interrupt on rising-edge
-	//PORTB->ISFR &= !(1 << 10); //ISRF resetten
-	NVIC_EnableIRQ(60);
+	initJoyStick(RIGHT, c10);
+	initJoyStick(UP, b10);
+	initJoyStick(FIRE, b23);
+	initJoyStick(LEFT, c11);
+	initJoyStick(DOWN, b11);
 
-	printf("while started\n");
 	while (1) {
 		delay();
 		//printf("while %x\n", ~(0 << 24));
 	}
 
+	/*
+	 printf("begin aan DAC test\n");
+	 uint16_t waarde = 0;
+	 while(1){
+	 scanf("%i", &waarde);
+	 printf("setting value of DAC to %i\n", waarde);
+	 DAC0_set(waarde);
+	 printf("set!\n");
+	 delay();
+	 }
+	 */
 }
 
-void PORTB_IRQHandler(void) {
-	printf("Voor reset: PORTB->ISFR %x\n", PORTB->ISFR);
-	PORTB->ISFR |= (1<<24);
-	//printf("PORTB->PCR[10] %x\n", PORTB->PCR[10]);
-	printf("Na reset: PORTB->ISFR %x\n", PORTB->ISFR);
-}
