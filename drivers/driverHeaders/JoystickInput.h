@@ -1,11 +1,11 @@
 #include "MK64F12.h"
-#include "board.h"
-#include "peripherals.h"
-#include "pin_mux.h"
-#include "clock_config.h"
-#include "MK64F12.h"
-#include "fsl_debug_console.h"
 
+/*
+ * Enum that represents the direction of the joystick pins.
+ * <p>
+ * integer assigned to enum = pinnumber + 100 if PORTB or +200 if PORTC.
+ * <\p>
+ */
 typedef enum
 { //integer assigned to enum = pinnumber + 100 if PORTB or +200 if PORTC
     UP = 110,
@@ -15,10 +15,15 @@ typedef enum
 	FIRE = 123
 } direction;
 
-/*
- * port is 'b' or 'c';
- * pin is pinnumber
- * *fp is pointer to ISR
- * direction is string: "up", "down", "left", "right" or "fire".
+/**
+ * Initialises a pin of joystick.
+ * <p>
+ * One pin of the joystick is initialised. An interrupt is set on
+ * rising edges.
+ * </p>
+ *
+ * @param  dir says which direction should be initialized. UP, DOWN, LEFT, RIGHT or FIRE.
+ * @param fp is a pointer to the function that is the ISR.
+ * @return zero if succesfull.
  */
 int initJoyStick(direction dir, void (*fp)(void));
