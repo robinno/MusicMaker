@@ -1,7 +1,7 @@
 #include "driverHeaders/DriverTimer0.h"
 
 const float PIT_clock_Freq = 60; //in MHz => bus clock
-
+void (*tim0IRQ)(void);
 
 void initTim0(){
 	//System Clock Gating Control Register 6 (SIM_SCGC6)
@@ -21,6 +21,10 @@ void initTim0(){
 	NVIC_EnableIRQ(48);
 }
 
+void Tim0SetIRQ(void (*interruptFunctie)(void)){
+	tim0IRQ = interruptFunctie;
+}
+
 void startTimer0(uint32_t microseconds){
 	//Timer Control Register (PIT_TCTRLn)
 	PIT -> CHANNEL[0].TCTRL |= ~1; 			//disable timer
@@ -34,11 +38,9 @@ void startTimer0(uint32_t microseconds){
 
 
 void PIT0_IRQHandler(void){
+	tim0IRQ(); //spring naar IRQ in hoger niveau
+
 	//Timer Flag Register (PIT_TFLGn)
 	PIT -> CHANNEL[0].TFLG = 1;					//clear interrupt flag.
 												// -> cleared by writing '1'
-
-	printf("interrupt van timer\n");
-
-	//TODO
 }

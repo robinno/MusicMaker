@@ -21,6 +21,10 @@ void delay() {
 //	printf("b11\n");
 //}
 
+void timer0_IRQ(){
+	printf("in IRQ van timer");
+}
+
 void toplevel() {
 	printf("in toplevel \n\r");
 	//turn off leds on app-board
@@ -40,6 +44,7 @@ void toplevel() {
 
 	printf("begin aan Timer0 test\n");
 	initTim0();
+	Tim0SetIRQ(timer0_IRQ);
 	startTimer0(1000000);//1 seconds
 
 	while (1) {
