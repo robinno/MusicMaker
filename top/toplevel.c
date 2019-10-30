@@ -39,8 +39,8 @@ void toplevel() {
 //	initJoyStick(DOWN, b11);
 
 	printf("begin aan Timer0 test\n");
-	initTim0(10000000); //10 seconds
-	startTimer0();
+	initTim0();
+	startTimer0(1000000);//1 seconds
 
 	while (1) {
 		delay();
