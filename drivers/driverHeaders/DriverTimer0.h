@@ -3,4 +3,6 @@
 
 void initTim0(uint32_t startValue);
 
-void startTimer();
+void startTimer0();
+
+void stopTimer0();
