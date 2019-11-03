@@ -21,7 +21,7 @@ void delay() {
 //	printf("b11\n");
 //}
 
-void timer0_IRQ(){
+void timer1_IRQ(){
 	printf("in IRQ van timer");
 }
 
@@ -42,10 +42,10 @@ void toplevel() {
 //	initJoyStick(LEFT, c11);
 //	initJoyStick(DOWN, b11);
 
-	printf("begin aan Timer0 test\n");
-	initTim0();
-	Tim0SetIRQ(timer0_IRQ);
-	startTimer0(1000000);//1 seconds
+	printf("begin aan Timer1 test\n");
+	initTim1();
+	Tim1SetIRQ(timer1_IRQ);
+	startTimer1(1000000);//1 seconds
 
 	while (1) {
 		delay();

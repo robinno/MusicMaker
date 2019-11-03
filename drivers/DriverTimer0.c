@@ -1,6 +1,10 @@
 #include "driverHeaders/DriverTimer0.h"
 
-const float PIT_clock_Freq = 60; //in MHz => bus clock
+#ifndef PIT_clock_Freq
+#define PIT_clock_Freq 60
+//60 = in MHz => bus clock
+#endif
+
 void (*tim0IRQ)(void);
 
 void initTim0(){
@@ -11,7 +15,7 @@ void initTim0(){
 	PIT -> MCR = 0; 					//enable PIT module
 
 	//Timer Control Register (PIT_TCTRLn)
-	PIT -> CHANNEL[0].TCTRL |= (1 << 1); 	//enable interrupts
+	PIT -> CHANNEL[0].TCTRL = (1 << 1); 	//enable interrupts
 
 	//Timer Flag Register (PIT_TFLGn)
 	PIT -> CHANNEL[0].TFLG = 1;				//clear interrupt flag before starting.
