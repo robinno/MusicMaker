@@ -38,6 +38,8 @@ void toplevel() {
 	initJoyStick(LEFT, c11);
 	initJoyStick(DOWN, b11);
 
+	initSPI();
+
 	while (1) {
 		delay();
 		//printf("while %x\n", ~(0 << 24));
