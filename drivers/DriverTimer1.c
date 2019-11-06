@@ -31,7 +31,7 @@ void Tim1SetIRQ(void (*interruptFunctie)(void)){
 
 void startTimer1(uint32_t microseconds){
 	//Timer Control Register (PIT_TCTRLn)
-	PIT -> CHANNEL[1].TCTRL |= ~1; 			//disable timer
+	PIT -> CHANNEL[1].TCTRL &= ~1; 			//disable timer
 
 	//Timer Load Value Register (PIT_LDVALn)
 	PIT -> CHANNEL[1].LDVAL = (uint32_t)(microseconds * PIT_clock_Freq) - 1; 	//set the startvalue on timer 0
