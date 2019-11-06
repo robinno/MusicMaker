@@ -14,6 +14,7 @@ int initSPI(){
 	//SPI0->MCR |= (0<<31); //no continuous clk.
 	SPI0->MCR |= (1<<16); //The inactive state of PCS0 is high
 	//SPI0->MCR |= (0<<10);//Do not clear the RX FIFO counter.
+	SPI0->MCR |= 1; //stop transfers
 
 	/*CTAR use CTAR0*/
 	SPI0->CTAR[0] &= 0;//initialize with zeros
@@ -28,5 +29,14 @@ int initSPI(){
 }
 
 int pushSPI(int A0, uint8_t data){
-
+	SPI0->MCR |= 1; //stop transfer
+	//SPI0_PCS0 = nCS → SPI0->PUSHR &= ~1<<16
+	(A0 == 1)? (SPI0->PUSHR |= 1<<17):(SPI0->PUSHR &= ~1<<17);//SPI0_PCS1 = A0
+	SPI0->PUSHR |= data; //put data in lsB.
+	SPI0->MCR &= ~1; //start transfer
+	//busy wait here
+	while(SPI0->SR >>31  != 1);//busy wait while transfer not complete.
+	SPI0->SR |= 1<<31; //clear TCR by writing 1.
+	SPI0->MCR |= 1<<11;//clear TX FIFO
+	return 0;
 }
