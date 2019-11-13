@@ -2,7 +2,6 @@
 
 int initSPI() {
 	SIM->SCGC5 |= (3 << 11); //clock gate on PORT C and D (resp. b11 and b12)
-	const int muxAlt2 = (2 << 8);
 	PORTC->PCR[3] |= (1 << 8); //set mux of Port C3 to alt1
 	GPIOC->PDDR |= (1 << 3); //set Port C3 as output
 	for (int i = 0; i < 4; i++) {
