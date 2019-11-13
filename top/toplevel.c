@@ -49,11 +49,21 @@ void toplevel() {
 
 
 
-	initSPI();
+//	initSPI();
+//	printf("starting sending commands to LCD\n");
+//	while(1){
+//		display_OnOff(1);
+//		display_allPoints(1);
+//	}
+//	printf("end\n");
+
+	printf("starting testSine");
+	playsound_init();
+	playsound_testSineWave();
 
 	while (1) {
 		delay();
-		//printf("while %x\n", ~(0 << 24));
+		//printf("while %x\n", ~(0 << 24));l
 	}
 
 	/*

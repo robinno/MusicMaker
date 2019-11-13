@@ -1,5 +1,6 @@
 #include "MK64F12.h"
 #include <stdint.h>
+#include <stdbool.h>
 
 void DAC0_init();
 

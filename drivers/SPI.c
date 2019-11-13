@@ -35,7 +35,8 @@ int pushSPI(int A0, uint8_t data){
 	SPI0->PUSHR |= data; //put data in lsB.
 	SPI0->MCR &= ~1; //start transfer
 	//busy wait here
-	while(SPI0->SR >>31  != 1);//busy wait while transfer not complete.
+	//while(SPI0->SR >>31  != 1);//busy wait while transfer not complete.
+	for(uint16_t i = 0; i < 0xFFFF; i++);
 	SPI0->SR |= 1<<31; //clear TCR by writing 1.
 	SPI0->MCR |= 1<<11;//clear TX FIFO
 	return 0;

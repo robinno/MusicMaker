@@ -16,7 +16,6 @@ void initPot() {
 	//ADC channel input and single ended, interrupts, ...
 	//ADCH field = "0b11111" = module is disabled
 	ADC0->SC1[0] |= 0x1F;
-
 }
 
 uint16_t getPotInput() {
