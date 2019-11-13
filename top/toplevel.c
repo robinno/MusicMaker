@@ -61,6 +61,8 @@ void toplevel() {
 	playsound_init();
 	playsound_testSineWave();
 
+	pushSPI(1, 0xaa);
+
 	while (1) {
 		delay();
 		//printf("while %x\n", ~(0 << 24));l
