@@ -1,43 +1,50 @@
 #include "driverHeaders/SPI.h"
 
-int initSPI(){
-	SIM->SCGC6 |= (1<<12); //clock gate for SPI0
-	SIM->SCGC5 |= (3<<11); //clock gate on PORT C and D (resp. b11 and b12)
-	const int muxAlt2 = (2<<8);
-	PORTC->PCR[3] |= muxAlt2; //set mux of Port C3 to alt2
-	for(int i =0; i<4; i++){
-		PORTD->PCR[i] |= muxAlt2; //set mux of Port D 0-3 to alt2.
+int initSPI() {
+	SIM->SCGC5 |= (3 << 11); //clock gate on PORT C and D (resp. b11 and b12)
+	PORTC->PCR[3] |= (1 << 8); //set mux of Port C3 to alt1
+	GPIOC->PDDR |= (1 << 3); //set Port C3 as output
+	for (int i = 0; i < 4; i++) {
+		PORTD->PCR[i] |= (1 << 8); //set mux of Port D 0-3 to alt1.
+		GPIOD->PDDR |= (1 << i); //set Port Di as output
 	}
-
-	/*MCR*/
-	SPI0->MCR |= (1<<31);//enable Master mode
-	//SPI0->MCR |= (0<<31); //no continuous clk.
-	SPI0->MCR |= (1<<16); //The inactive state of PCS0 is high
-	//SPI0->MCR |= (0<<10);//Do not clear the RX FIFO counter.
-	SPI0->MCR |= 1; //stop transfers
-
-	/*CTAR use CTAR0*/
-	SPI0->CTAR[0] &= 0;//initialize with zeros
-	SPI0->CTAR[0] |= (7<<27);
-	SPI0->CTAR[0] |= (1<<26);//The inactive state value of SCK is high.
-	SPI0->CTAR[0] |= (1<<25);//Data is changed on the leading edge of SCK and captured on the following edge.
-	SPI0->CTAR[0] |= (1<<8); // ASC = 4
-	SPI0->CTAR[0] |= (1<<4); // DT = 4
-
+	GPIOD->PDOR |= (1 << 0); //set nCS to 1
+	GPIOD->PDOR |= (1 << 1); //set SCK to 1
+	GPIOD->PDOR &= ~(1<<3); //reset to 0;
+	delay_ms(100);
+	GPIOD->PDOR |= (1<<3); //reset to 1;
 	printf("initSPI completed.\n");
 	return 0;
 }
 
-int pushSPI(int A0, uint8_t data){
-	SPI0->MCR |= 1; //stop transfer
-	//SPI0_PCS0 = nCS → SPI0->PUSHR &= ~1<<16
-	(A0 == 1)? (SPI0->PUSHR |= 1<<17):(SPI0->PUSHR &= ~1<<17);//SPI0_PCS1 = A0
-	SPI0->PUSHR |= data; //put data in lsB.
-	SPI0->MCR &= ~1; //start transfer
-	//busy wait here
-	//while(SPI0->SR >>31  != 1);//busy wait while transfer not complete.
-	for(uint16_t i = 0; i < 0xFFFF; i++);
-	SPI0->SR |= 1<<31; //clear TCR by writing 1.
-	SPI0->MCR |= 1<<11;//clear TX FIFO
+int pushSPI(int A0, uint8_t data) {
+	GPIOD->PDOR |= (1 << 0); //set nCS to 0
+	if (A0 == 1) {
+		GPIOC->PDOR |= (1 << 3); //A0 to 1
+	} else {
+		GPIOC->PDOR &= ~(1 << 3); //A0 to 0
+	}
+	for (int32_t i = 7; i >= 0; i--) {
+		GPIOD->PDOR &= ~(1 << 1); //SCK to 0
+		if (data >> i == 1) {
+			GPIOD->PDOR |= (1 << 2); //MOSI to 1
+		} else {
+			GPIOD->PDOR &= ~(1 << 2); //MOSI to 0
+		}
+		delay_10ns(500);
+		GPIOD->PDOR |= (1 << 1); //SCK to 1
+		delay_10ns(500);
+	}
+	GPIOD->PDOR |= (1 << 0); //set nCS to 1
+	printf("data is send.\n");
 	return 0;
+}
+
+void delay_10ns(int ns10) {
+	for (long i = 0; i < (1 * ns10); i++) {
+	} //timed measurements
+}
+
+void delay_ms(int ms) {
+	for (long i = 0; i < (1700 * ms); i++) {}//timed measurements
 }

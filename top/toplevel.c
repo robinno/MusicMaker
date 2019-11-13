@@ -57,9 +57,13 @@ void toplevel() {
 //	}
 //	printf("end\n");
 
-	printf("starting testSine");
-	playsound_init();
-	playsound_test2SineWaves(1);
+//	printf("starting testSine");
+//	playsound_init();
+//	playsound_testSineWave();
+
+
+	init_LCD();
+	display_allPoints(1);
 
 	while (1) {
 		delay();
