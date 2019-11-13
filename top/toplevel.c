@@ -59,7 +59,7 @@ void toplevel() {
 
 	printf("starting testSine");
 	playsound_init();
-	playsound_testSineWave();
+	playsound_test2SineWaves(1);
 
 	while (1) {
 		delay();
