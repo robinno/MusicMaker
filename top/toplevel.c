@@ -51,8 +51,6 @@ void toplevel() {
 //	Tim0SetIRQ(timer1_IRQ);
 //	startTimer0(1000000);//1 seconds
 
-
-
 //	initSPI();
 //	printf("starting sending commands to LCD\n");
 //	while(1){
