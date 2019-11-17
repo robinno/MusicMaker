@@ -6,6 +6,7 @@ void delay() {
 }
 
 void knopgedrukt(void){
+	printf("kick\n");
 	playsound_kick();
 }
 
@@ -67,7 +68,7 @@ void toplevel() {
 //	init_LCD();
 //	display_allPoints(1);
 
-	printf("testing kick");
+	printf("testing kick\n");
 	initJoyStick(FIRE, knopgedrukt);
 	playsound_init();
 
