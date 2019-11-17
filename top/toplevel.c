@@ -5,6 +5,10 @@ void delay() {
 	}
 }
 
+void knopgedrukt(void){
+	playsound_kick();
+}
+
 //void c10(void) {
 //	printf("c10\n");
 //}
@@ -61,9 +65,13 @@ void toplevel() {
 //	playsound_init();
 //	playsound_testSineWave();
 
+//
+//	init_LCD();
+//	display_allPoints(1);
 
-	init_LCD();
-	display_allPoints(1);
+	printf("testing kick");
+	initJoyStick(FIRE, knopgedrukt);
+	playsound_init();
 
 	while (1) {
 		delay();
