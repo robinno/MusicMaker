@@ -5,4 +5,4 @@
 
 void playsound_init(uint8_t aantalTracks, uint8_t aantalGeluidjes, struct sound* geluidjes);
 
-void playsound(uint8_t indexVanGeluidje);
+void playsound(uint8_t trackNr);
