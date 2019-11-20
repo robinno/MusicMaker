@@ -1,67 +1,58 @@
 #include "middlewareHeaders/PlaySound.h"
-#include "geluidjes.h"
 
-//TESTSIGNALS:
+////GLOBALS:
+uint8_t amountOfTracks = 0;
+uint8_t amountOfSounds = 0;
 
-bool testSinePlaying = false;
-uint8_t testSineIndex = 0;
+struct sound* sounds;
 
-bool testSine2Playing = false;
-uint8_t testSine2Index = 0;
-
-bool kickPlaying = false;
-uint16_t kickIndex = 0;
-
-
-/////////////////////
-//IRQ FOR TIMER:
-/////////////////////
+///////////////////////
+////IRQ FOR TIMER:
+///////////////////////
 
 void playNextSample(){ //THE IRQ for the timer
-//	if(testSine2Playing && testSinePlaying){
-//		DAC0_set((testSine[testSineIndex] + testSine2[testSine2Index]) / 2);
-//		testSineIndex = (testSineIndex + 1) % testSineLength;
-//		testSine2Index = (testSine2Index + 1) % testSine2Length;
-//	}else if(testSinePlaying){
-//		DAC0_set(testSine[testSineIndex]);
-//		testSineIndex = (testSineIndex + 1) % testSineLength;
-//	}
 
-	if(kickPlaying){
-		DAC0_set(kick[kickIndex]); //output sample
-		kickIndex++;
+	uint16_t output = 0;
 
-		if(kickIndex >= kickLength){ //when at the end of the kick array
-			kickPlaying = false;
-			kickIndex = 0;
-		}
-	}
+	//TODO
+//	if(bambooPlaying){
+//			output += (bamboo[bambooIndex] / amountOfTracks); //output sample
+//			bambooIndex++;
+//
+//			if(bambooIndex >= bambooLength){ //when at the end of the bamboo array
+//				bambooPlaying = false;
+//				bambooIndex = 0;
+//			}
+//		}
 
+	DAC0_set(output);
 }
 
 
 
-/////////////////////
-//PUBLIC FUNCTIONS
-/////////////////////
+///////////////////////
+////PUBLIC FUNCTIONS
+///////////////////////
 
-void playsound_init() {
+void playsound_init(uint8_t aantalTracks, uint8_t aantalGeluidjes, struct sound* geluidjes) {
 	DAC0_init();
+
+	amountOfTracks = aantalTracks;
+	amountOfSounds = aantalGeluidjes;
+	sounds = geluidjes;
+
+	//set all sounds: not playing and starting index = 0:
+	for(uint8_t i = 0; i < amountOfSounds; i ++){
+		sounds[i].playing = 0;
+		sounds[i].index = 0;
+	}
 
 	initTim1();
 	Tim1SetIRQ(playNextSample);
 	startTimer1((uint32_t) 1000/fs);
 }
 
-void playsound_testSineWave(uint8_t on) {
-	testSinePlaying = (on == 1)? true: false;
-}
-
-void playsound_test2SineWaves(uint8_t on) {
-	testSinePlaying = (on == 1)? true: false;
-	testSine2Playing = (on == 1)? true: false;
-}
-
-void playsound_kick(){
-	kickPlaying = true;
+void playsound(uint8_t indexVanGeluidje){
+	sounds[indexVanGeluidje].playing = 1;
+	sounds[indexVanGeluidje].index = 0;
 }
