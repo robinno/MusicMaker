@@ -65,17 +65,17 @@ void toplevel() {
 //	playsound_testSineWave();
 
 //
-//	init_LCD();
-//	display_allPoints(1);
+	init_LCD();
+	print_LCD();
 
-	printf("testing kick\n");
-	initJoyStick(FIRE, knopgedrukt);
-	playsound_init();
-
-	while (1) {
-		delay();
-		//printf("while %x\n", ~(0 << 24));l
-	}
+//	printf("testing kick\n");
+//	initJoyStick(FIRE, knopgedrukt);
+//	playsound_init();
+//
+//	while (1) {
+//		delay();
+//		//printf("while %x\n", ~(0 << 24));l
+//	}
 
 	/*
 	 printf("begin aan DAC test\n");
