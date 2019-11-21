@@ -1,13 +1,29 @@
 #include "topHeaders/toplevel.h"
+#include "topHeaders/Geluidjes.h"
 
 void delay() {
 	for (long i = 0; i < 1000000; i++) {
 	}
 }
 
-void knopgedrukt(void){
+void knopLinks(void){
 	printf("kick\n");
-	playsound_kick();
+	//playsound_kick();
+}
+
+void knopRechts(void){
+	printf("hat\n");
+	//playsound_hat();
+}
+
+void knopBoven(void){
+	printf("snare\n");
+	//playsound_snare();
+}
+
+void knopOnder(void){
+	printf("bamboo\n");
+	//playsound_bamboo();
 }
 
 //void c10(void) {
