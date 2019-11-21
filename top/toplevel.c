@@ -82,7 +82,11 @@ void toplevel() {
 
 //
 	init_LCD();
-	print_LCD();
+	print_Line(3, "", 0);
+	print_Line(2, "Kijk Robin!!", 12);
+	print_Line(1, "", 0);
+	print_Line(0, "", 0);
+
 
 //	printf("testing kick\n");
 //	initJoyStick(FIRE, knopgedrukt);
