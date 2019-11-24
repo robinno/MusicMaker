@@ -1,29 +1,35 @@
 #include "topHeaders/toplevel.h"
 #include "topHeaders/Geluidjes.h"
 
+//INIT stateVars:
+void initstates(){
+	//menutiteltjes:
+	MENU_titeltjes[0] = "BPM instellen";
+	MENU_titeltjes[1] = "Maat instellen";
+	MENU_titeltjes[2] = "spelende tracks";
+	for(int i = 0; i < aantalTracks; i++){
+		sprintf(MENU_titeltjes[i], "track %i menu", someInt);
+	}
+}
+
+
+
+
 void delay() {
 	for (long i = 0; i < 1000000; i++) {
 	}
 }
 
-void knopLinks(void){
-	printf("kick\n");
-	//playsound_kick();
-}
-
-void knopRechts(void){
-	printf("hat\n");
-	//playsound_hat();
-}
-
 void knopBoven(void){
-	printf("snare\n");
-	//playsound_snare();
+
 }
 
 void knopOnder(void){
-	printf("bamboo\n");
-	//playsound_bamboo();
+
+}
+
+void knopFire(void){
+
 }
 
 //void c10(void) {
