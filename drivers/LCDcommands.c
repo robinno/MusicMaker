@@ -30,7 +30,7 @@ void display_setColumnAddr(uint8_t columnAddr){
 }
 
 void display_dataWrite(uint8_t data){
-	pushSPI(0, data);
+	pushSPI(1, data);
 }
 
 void display_allPoints(int on){ //0 for normal mode, 1 for all points on
