@@ -16,7 +16,7 @@ void init_LCD() {
 	pushSPI(0, 0xA6);    // display normal
 	pushSPI(0, 0x40);   // start line = 0
 	display_OnOff(1);
-	printf("Init LCD done\n");
+	//printf("Init LCD done\n");
 }
 
 void print_Line(int page, char string[], int strLength) {
@@ -25,7 +25,7 @@ void print_Line(int page, char string[], int strLength) {
 		pushSPI(0, 0x10);      // set column hi  nibble 0
 		pushSPI(0, 0xB0 | page);      // set page address  0
 		strLength = (strLength > nr_columns)? nr_columns : strLength;//print no more than there is screen
-		printf("a to num=%d", 'a');
+		//printf("a to num=%d\n", 'a');
 		for(int i=0; i<strLength; i++){//print string
 			uint32_t fontIndex = string[i] - 32; //first entry in font table is ascii 32 (= space)
 			for(int j=0; j<8; j++){
