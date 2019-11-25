@@ -1,5 +1,18 @@
 #include "topHeaders/toplevel.h"
 #include "topHeaders/Geluidjes.h"
+#include <stdbool.h>
+
+bool PRESSED_DOWN = false;
+bool PRESSED_UP = false;
+bool PRESSED_FIRE = false;
+bool loop = false;
+
+uint8_t huidigeMenuTitel = 0;
+uint8_t track = 0;
+
+//////////////////
+// STATEMACHINE	//
+//////////////////
 
 //INIT stateVars:
 void initstates(){
@@ -12,107 +25,103 @@ void initstates(){
 	}
 }
 
+void state_machine_opInterrupt(){
+	do{
+		loop = false;
 
+		switch(state){
+			case MENU:
+				if(PRESSED_DOWN){
+					huidigeMenuTitel = (huidigeMenuTitel + 1) % AantalMenuTiteltjes;
+				}
+				if(PRESSED_UP){
+					huidigeMenuTitel = (huidigeMenuTitel == 0) ? (AantalMenuTiteltjes - 1) : (huidigeMenuTitel - 1);
+				}
+				if(PRESSED_FIRE){
+					switch(huidigeMenuTitel){
+						case 0: //BPM instellen
+							state = BPM_INST;
+							break;
+						case 1: //MAAT instellen
+							state = MAAT_INST;
+							break;
+						case 2: //SPELENDE TRACKS instellen
+							state = SPELENDE_TRACKS_INST;
+							break;
+						default: //ALLE TRACKS:
+							state = TRACK_MENU;
+							track = huidigeMenuTitel - 3;
+							break;
+					}
 
+					loop = true; //redo the switch(state)
+				}
 
-void delay() {
-	for (long i = 0; i < 1000000; i++) {
-	}
+				//show MENU_titeltjes[huidigeMenuTitel] op LCD
+				break;
+			case BPM_INST:
+
+				break;
+			case MAAT_INST:
+
+				break;
+			case SPELENDE_TRACKS_INST:
+
+				break;
+			case TRACK_MENU:
+
+				break;
+			case RESOLUTIE_INST:
+
+				break;
+			case GELUID_INST:
+
+				break;
+			case REC_PERCUSSIE:
+
+				break;
+		}
+
+		PRESSED_DOWN = false;
+		PRESSED_UP = false;
+		PRESSED_FIRE = false;
+	}while(loop);
 }
 
-void knopBoven(void){
 
+//////////////////////////
+// INTERRUPT HANDLERS	//
+//////////////////////////
+
+
+void knopBoven(void){
+	PRESSED_UP = true;
+	state_machine_opInterrupt();
 }
 
 void knopOnder(void){
-
+	PRESSED_DOWN = true;
+	state_machine_opInterrupt();
 }
 
 void knopFire(void){
-
+	PRESSED_FIRE = true;
+	state_machine_opInterrupt();
 }
 
-//void c10(void) {
-//	printf("c10\n");
-//}
-//void b10(void) {
-//	printf("b10\n");
-//}
-//void b23(void) {
-//	printf("b23\n");
-//}
-//void c11(void) {
-//	printf("c11\n");
-//}
-//void b11(void) {
-//	printf("b11\n");
-//}
-//
-//void timer1_IRQ(){
-//	printf("in IRQ van timer\n");
-//}
+//////////
+// MAIN	//
+//////////
 
 void toplevel() {
 	printf("in toplevel \n\r");
-	//turn off leds on app-board
-//	initLED_A(2); //red
-//	setLED_A(2, 0);
-//	initLED_C(4); //green
-//	setLED_C(4, 1);
-//	initLED_C(12); //blue
-//	setLED_C(12, 1);
-//	printf("all leds off\n");
-//
-//	initJoyStick(RIGHT, c10);
-//	initJoyStick(UP, b10);
-//	initJoyStick(FIRE, b23);
-//	initJoyStick(LEFT, c11);
-//	initJoyStick(DOWN, b11);
 
-//	printf("begin aan Timer1 test\n");
-//	initTim0();
-//	Tim0SetIRQ(timer1_IRQ);
-//	startTimer0(1000000);//1 seconds
-
-//	initSPI();
-//	printf("starting sending commands to LCD\n");
-//	while(1){
-//		display_OnOff(1);
-//		display_allPoints(1);
-//	}
-//	printf("end\n");
-
-//	printf("starting testSine");
-//	playsound_init();
-//	playsound_testSineWave();
-
-//
 	init_LCD();
 	print_Line(3, "", 0);
 	print_Line(2, "Kijk Robin!!", 12);
 	print_Line(1, "", 0);
 	print_Line(0, "", 0);
 
-
-//	printf("testing kick\n");
-//	initJoyStick(FIRE, knopgedrukt);
-//	playsound_init();
-//
-//	while (1) {
-//		delay();
-//		//printf("while %x\n", ~(0 << 24));l
-//	}
-
-	/*
-	 printf("begin aan DAC test\n");
-	 uint16_t waarde = 0;
-	 while(1){
-	 scanf("%i", &waarde);
-	 printf("setting value of DAC to %i\n", waarde);
-	 DAC0_set(waarde);
-	 printf("set!\n");
-	 delay();
-	 }
-	 */
+	while(1); //wait loop.
 }
 

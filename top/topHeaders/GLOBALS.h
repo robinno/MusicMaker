@@ -13,15 +13,15 @@
 //STATEMACHINE variables:
 enum states{MENU, BPM_INST, MAAT_INST, SPELENDE_TRACKS_INST, TRACK_MENU, RESOLUTIE_INST, GELUID_INST, REC_PERCUSSIE};
 uint8_t state = MENU;
-uint8_t huidigeTrack_Trackmenu = 0;
 
 //////////////////////
 // STATE variables:	//
 //////////////////////
 
 //STATE Menu:
-	#define tekstOpSchermLengte 15;
-	char MENU_titeltjes[tekstOpSchermLengte][aantalTracks + 3];
+	#define tekstOpSchermLengte 15
+	#define AantalMenuTiteltjes (aantalTracks + 3)
+	char MENU_titeltjes[tekstOpSchermLengte][AantalMenuTiteltjes];
 
 	//STATE BPM_inst
 		#define minimumBPM 40
