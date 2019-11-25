@@ -1,10 +1,3 @@
-/*
- * STATES.h
- *
- *  Created on: 24 nov. 2019
- *      Author: robin
- */
-
 #ifndef TOP_TOPHEADERS_GLOBALS_H_
 #define TOP_TOPHEADERS_GLOBALS_H_
 
@@ -19,19 +12,23 @@ uint8_t state = MENU;
 //////////////////////
 
 //STATE Menu:
-	#define tekstOpSchermLengte 15
-	#define AantalMenuTiteltjes (aantalTracks + 3)
-	char MENU_titeltjes[tekstOpSchermLengte][AantalMenuTiteltjes];
+#define aantalMenuTiteltjes (aantalTracks + 3)
+#define tekstlengte 15
 
-	//STATE BPM_inst
-		#define minimumBPM 40
-		uint8_t huidigeBPM = 100;
-		#define maximumBPM 240
+struct{
+	char titeltjes[aantalMenuTiteltjes][tekstlengte];
+	uint8_t index;
+}menu;
 
-	//STATE maat_inst
-		//TODO
+//STATE BPM_inst
+#define minimumBPM 40
+uint8_t huidigeBPM = 100;
+#define maximumBPM 240
+
+//STATE maat_inst
+//TODO
 
 //WHEN a selected track menu:
-	uint8_t selected_track = 0;
+uint8_t selected_track = 0;
 
 #endif /* TOP_TOPHEADERS_GLOBALS_H_ */
