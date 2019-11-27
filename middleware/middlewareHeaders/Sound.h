@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifndef soundHeader
 #define soundHeader
@@ -16,6 +17,7 @@ struct sound{
 	uint16_t length;
 	uint16_t samples[samplesBufferSize];
 
+	bool active; //nodig bij toekenning aan track in hoger level.
 	uint8_t playing; //nodig bij afspelen
 	uint16_t index; //huidige index bij afspelen
 };

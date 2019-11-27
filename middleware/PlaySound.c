@@ -1,4 +1,5 @@
 #include "middlewareHeaders/PlaySound.h"
+#include <stdbool.h>
 
 ////GLOBALS:
 uint8_t amountOfTracks = 0;
@@ -40,6 +41,7 @@ void playsound_init(uint8_t aantalTracks, struct sound* ActiveTracks) {
 	for(uint8_t i = 0; i < aantalTracks; i ++){
 		tracks_geluidjes[i].playing = 0;
 		tracks_geluidjes[i].index = 0;
+		tracks_geluidjes[i].active = false;
 	}
 
 	//init driver layer "components":

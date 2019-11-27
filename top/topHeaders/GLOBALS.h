@@ -20,6 +20,7 @@ uint8_t state = MENU;
 //struct for tracks:
 struct {
 	bool active;
+	uint8_t geluidjesIndex;
 } tracks[aantalTracks];
 
 //////////////////////
@@ -28,7 +29,7 @@ struct {
 
 //STATE Menu:
 #define aantalMenuTiteltjes (aantalTracks + 2)
-#define tekstlengte 16
+#define tekstlengte 14
 struct {
 	char titeltjes[aantalMenuTiteltjes][tekstlengte];
 	uint8_t index;
@@ -45,8 +46,8 @@ uint8_t huidigeBPM;
 uint8_t maatIndex = 0;
 
 //STATE track_menu
-#define aantalTrackTiteltjes 4
-#define trackTiteltjes {"Terug naar menu", "Kwantisatie", "Geluidje", "Record ..."}
+#define aantalTrackTiteltjes 5
+#define trackTiteltjes {"Terug", "actief", "Kwantisatie", "Geluidje", "Record ..."}
 uint8_t huidigTrackTiteltje = 0;
 
 #endif /* TOP_TOPHEADERS_GLOBALS_H_ */

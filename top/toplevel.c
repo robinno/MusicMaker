@@ -24,7 +24,7 @@ void init() {
 
 	//INIT TRACKS:
 	for (int i = 0; i < aantalTracks; i++) {
-		tracks[i] = false;
+		tracks[i].active = false;
 	}
 }
 
@@ -98,14 +98,17 @@ void loop() {
 				case 0: //terug naar menu
 					state = MENU;
 					break;
-				case 1: //Kwantisatie
+				case 1:
+					tracks[trackIndex].active = !(tracks[trackIndex].active); //toggle active.
+					break;
+				case 2: //Kwantisatie
 					state = RESOLUTIE_INST;
 					break;
-				case 2: //geluidje:
+				case 3: //geluidje:
 					state = GELUID_INST;
 					break;
-				case 3: //Record:
-					state = REC_PERCUSSIE
+				case 4: //Record:
+					state = REC_PERCUSSIE;
 					break;
 				}
 			}
@@ -115,7 +118,29 @@ void loop() {
 			//TODO
 			break;
 		case GELUID_INST:
-			//TODO
+			//zet eigen active geluidje als false:
+			geluidjes[geluidjesIndex]->active == false;
+
+			if (PRESSED_DOWN) {
+				do {
+					geluidjesIndex = (geluidjesIndex + 1) % aantalGeluidjes;
+				} while (geluidjes[geluidjesIndex]->active == true);
+			}
+			if (PRESSED_UP) {
+				do {
+					geluidjesIndex =
+							(geluidjesIndex == 0) ?
+									(aantalGeluidjes - 1) :
+									(geluidjesIndex - 1);
+				} while (geluidjes[geluidjesIndex]->active == true);
+			}
+			if (PRESSED_FIRE) {
+				state = TRACK_MENU;
+			}
+
+			//zet geselecteerde active geluidje als true:
+			geluidjes[geluidjesIndex]->active == true;
+			tracks[trackIndex].active = true;
 			break;
 		case REC_PERCUSSIE:
 			//TODO
