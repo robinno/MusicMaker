@@ -114,14 +114,13 @@ void knopFire(void){
 void toplevel() {
 	printf("in toplevel \n\r");
 
-	middleware_init_LCD();
-	print_menuName("AAAAAAAAAAAAAA");
-	print_metronome(4, 5);
-	for(int i=0; i<44444440; i++){}
-	print_metronome(13, 16);
-	print_menuName("BBBBBBBBBBBBB");
-	for(int i=0; i<44444440; i++){}
-	print_menuName("AAAAAAAAAAAAAA");
+	initRGB();
+	setLED(RED, 0);
+	setLED(BLUE, 1);
+	setLED(GREEN,1);
+	printf("leds\n");
+	for(int i=0; i<4000000; i++){}
+	setLED(GREEN, 0);
 	while(1); //wait loop.
 }
 

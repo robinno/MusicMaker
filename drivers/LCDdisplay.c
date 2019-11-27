@@ -19,15 +19,15 @@ void init_LCD() {
 	//printf("Init LCD done\n");
 }
 
-void print_text(uint8_t page, char string[]) {   //strlen(str)
-	uint8_t strLength = strlen(string);
+void print_text(uint8_t page, char text[]){  //strlen(str)
+	uint8_t strLength = strlen(text);
 	if (page < 4) {
 		pushSPI(0, 0x00);      // set column low nibble 0
 		pushSPI(0, 0x10);      // set column hi  nibble 0
 		pushSPI(0, 0xB0 | page);      // set page address to page
 		strLength = (strLength > nr_columns / 8) ? nr_columns / 8 : strLength; //print no more than there is screen
 		for (uint8_t i = 0; i < strLength; i++) {      //print string
-			uint32_t fontIndex = string[i] - 32; //first entry in font table is ascii 32 (= space)
+			uint32_t fontIndex = text[i] - 32; //first entry in font table is ascii 32 (= space)
 			for (uint8_t j = 0; j < 8; j++) {
 				pushSPI(1, FONT8x8[fontIndex][j]); //print colomn
 			}
