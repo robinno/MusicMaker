@@ -19,12 +19,12 @@ void init_LCD() {
 	printf("Init LCD done\n");
 }
 
-void print_Line(int page, char string[], int strLength) {
+void print_Line(int page, char string[], int strLength) {//strlen(str)
 	if (page < 4) {
 		pushSPI(0, 0x00);      // set column low nibble 0
 		pushSPI(0, 0x10);      // set column hi  nibble 0
 		pushSPI(0, 0xB0 | page);      // set page address  0
-		strLength = (strLength > nr_columns)? nr_columns : strLength;//print no more than there is screen
+		strLength = (strLength > nr_columns/8)? nr_columns/8 : strLength;//print no more than there is screen
 		printf("a to num=%d", 'a');
 		for(int i=0; i<strLength; i++){//print string
 			uint32_t fontIndex = string[i] - 32; //first entry in font table is ascii 32 (= space)
