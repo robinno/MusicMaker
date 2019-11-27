@@ -9,7 +9,7 @@
 #define fs 50 //sample frequency in kHz
 
 #define nameBufferSize 10
-#define samplesBufferSize 65535 //Eventueel aanpassen als te klein.
+#define samplesBufferSize 10000 //Eventueel aanpassen als te klein.
 
 //struct for sounds:
 struct sound{

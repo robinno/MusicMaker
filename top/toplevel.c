@@ -9,10 +9,41 @@ bool PRESSED_UP = false;
 bool PRESSED_FIRE = false;
 
 uint8_t trackIndex = 0;
+uint8_t beatIndex = 0;
+
+//////////////////////////
+// INTERRUPT HANDLERS	//
+//////////////////////////
+
+void knopBoven(void) {
+	PRESSED_UP = true;
+}
+
+void knopOnder(void) {
+	PRESSED_DOWN = true;
+}
+
+void knopFire(void) {
+	PRESSED_FIRE = true;
+}
+
+void beat(void) { //When the beat timer throws an interrupt
+	for (uint8_t i = 0; i < aantalTracks; i++)
+		if (tracks[i].active && tracks[i].beat[beatIndex] == true)
+			playsound(tracks[i].geluidjesIndex);
+
+	beatIndex = (beatIndex + 1) % BeatArrLengte;
+}
+
+//////////
+// INIT	//
+//////////
 
 void init() {
 	//INIT peripherals:
 	initReadPot(minimumBPM, maximumBPM);
+	initTimer0();
+	Timer0SetIRQ(beat);
 
 	//INIT MENU:
 	menu.index = 0;
@@ -23,10 +54,16 @@ void init() {
 		sprintf(menu.titeltjes[i + 2], "track %i menu", i);
 	}
 
+	//INIT BPM: //TODO wegdoen en verplaatsen naar BPM_INST
+	startTimer0((uint16_t) (((uint32_t) huidigeBPM * 1000000) / 60));
+
 	//INIT TRACKS:
 	for (int i = 0; i < aantalTracks; i++) {
 		tracks[i].active = false;
 	}
+
+	//PASS TRACKS TO LOWER LEVEL:
+	playsound_init(aantalGeluidjes, geluidjes);
 }
 
 //////////////////
@@ -128,7 +165,8 @@ void loop() {
 			}
 			if (PRESSED_FIRE) {
 				state = TRACK_MENU;
-				tracks[trackIndex].kwantisatiePerAantalBeats = kwantisatieOpties[kwantisatie_index]->perAantalBeats;
+				tracks[trackIndex].kwantisatiePerAantalBeats =
+						kwantisatieOpties[kwantisatie_index]->perAantalBeats;
 			}
 			break;
 		case GELUID_INST:
@@ -137,8 +175,11 @@ void loop() {
 
 			if (PRESSED_DOWN) {
 				do {
-					tracks[trackIndex].geluidjesIndex = (tracks[trackIndex].geluidjesIndex + 1) % aantalGeluidjes;
-				} while (geluidjes[tracks[trackIndex].geluidjesIndex]->active == true);
+					tracks[trackIndex].geluidjesIndex =
+							(tracks[trackIndex].geluidjesIndex + 1)
+									% aantalGeluidjes;
+				} while (geluidjes[tracks[trackIndex].geluidjesIndex]->active
+						== true);
 			}
 			if (PRESSED_UP) {
 				do {
@@ -146,7 +187,8 @@ void loop() {
 							(tracks[trackIndex].geluidjesIndex == 0) ?
 									(aantalGeluidjes - 1) :
 									(tracks[trackIndex].geluidjesIndex - 1);
-				} while (geluidjes[tracks[trackIndex].geluidjesIndex]->active == true);
+				} while (geluidjes[tracks[trackIndex].geluidjesIndex]->active
+						== true);
 			}
 			if (PRESSED_FIRE) {
 				state = TRACK_MENU;
@@ -167,22 +209,6 @@ void loop() {
 	}
 }
 
-//////////////////////////
-// INTERRUPT HANDLERS	//
-//////////////////////////
-
-void knopBoven(void) {
-	PRESSED_UP = true;
-}
-
-void knopOnder(void) {
-	PRESSED_DOWN = true;
-}
-
-void knopFire(void) {
-	PRESSED_FIRE = true;
-}
-
 //////////
 // MAIN	//
 //////////
@@ -190,15 +216,19 @@ void knopFire(void) {
 void toplevel() {
 	printf("in toplevel \n\r");
 
-	init_LCD();
-	print_Line(3, "", 0);
-	print_Line(2, "Kijk Robin!!", 12);
-	print_Line(1, "", 0);
-	print_Line(0, "", 0);
-
+	//Testing the playsounds with timer:
 	init();
-	while (1)
-		printf("%i\n", readPot());
+	tracks[1].active = true;
+	tracks[1].geluidjesIndex = 1;//kick
+
+	for(int i = 0; i < 48; i++)
+		tracks[1].beat[i] = false;
+
+	tracks[1].beat[0] = true;
+	tracks[1].beat[12] = true;
+	tracks[1].beat[30] = true;
+
+
 
 	while (1)
 		; //wait loop.

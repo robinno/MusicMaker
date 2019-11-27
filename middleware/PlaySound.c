@@ -2,9 +2,9 @@
 #include <stdbool.h>
 
 ////GLOBALS:
-uint8_t amountOfTracks = 0;
+uint8_t numberOfSounds = 0;
 
-struct sound* tracks_geluidjes;
+struct sound** alleGeluidjes;
 
 /////////////////////
 //IRQ FOR TIMER:
@@ -13,14 +13,14 @@ struct sound* tracks_geluidjes;
 void playNextSample(){ //THE IRQ for the timer
 	uint16_t output = 0;
 
-	for(int i = 0; i < amountOfTracks; i++){
-		if(tracks_geluidjes[i].playing == 1){
-			output += tracks_geluidjes[i].samples[tracks_geluidjes[i].index] / amountOfTracks;
-			tracks_geluidjes[i].index++;
+	for(int i = 0; i < numberOfSounds; i++){
+		if(alleGeluidjes[i]->playing == 1){
+			output += alleGeluidjes[i]->samples[alleGeluidjes[i]->index] / numberOfSounds;
+			alleGeluidjes[i]->index++;
 
-			if(tracks_geluidjes[i].index >= tracks_geluidjes[i].length){
-				tracks_geluidjes[i].playing = 0;
-				tracks_geluidjes[i].index = 0;
+			if(alleGeluidjes[i]->index >= alleGeluidjes[i]->length){
+				alleGeluidjes[i]->playing = 0;
+				alleGeluidjes[i]->index = 0;
 			}
 		}
 	}
@@ -32,16 +32,16 @@ void playNextSample(){ //THE IRQ for the timer
 //PUBLIC FUNCTIONS
 /////////////////////
 
-void playsound_init(uint8_t aantalTracks, struct sound* ActiveTracks) {
+void playsound_init(uint8_t aantalSounds, struct sound** geluidjesPtr) {
 	//init own variables:
-	amountOfTracks = aantalTracks;
-	tracks_geluidjes = ActiveTracks;
+	numberOfSounds = aantalSounds;
+	alleGeluidjes = geluidjesPtr;
 
 	//set all sounds: not playing and starting index = 0:
-	for(uint8_t i = 0; i < aantalTracks; i ++){
-		tracks_geluidjes[i].playing = 0;
-		tracks_geluidjes[i].index = 0;
-		tracks_geluidjes[i].active = false;
+	for(uint8_t i = 0; i < aantalSounds; i ++){
+		alleGeluidjes[i]->playing = 0;
+		alleGeluidjes[i]->index = 0;
+		alleGeluidjes[i]->active = false;
 	}
 
 	//init driver layer "components":
@@ -51,7 +51,7 @@ void playsound_init(uint8_t aantalTracks, struct sound* ActiveTracks) {
 	startTimer1((uint32_t) 1000/fs);
 }
 
-void playsound(uint8_t trackNr){
-	tracks_geluidjes[trackNr].playing = 1;
-	tracks_geluidjes[trackNr].index = 0;
+void playsound(uint8_t geluidjeNr){
+	alleGeluidjes[geluidjeNr]->playing = 1;
+	alleGeluidjes[geluidjeNr]->index = 0;
 }

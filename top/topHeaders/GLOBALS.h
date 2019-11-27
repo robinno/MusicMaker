@@ -5,6 +5,7 @@
 
 #define aantalTracks 4
 #define tekstlengte 14
+#define BeatArrLengte 48
 
 //STATEMACHINE variables:
 enum states {
@@ -23,6 +24,7 @@ struct {
 	bool active;
 	uint8_t geluidjesIndex;
 	uint8_t kwantisatiePerAantalBeats;
+	bool beat[BeatArrLengte];
 } tracks[aantalTracks];
 
 //////////////////////
@@ -39,7 +41,7 @@ struct {
 //STATE BPM_inst
 #define minimumBPM 40
 #define maximumBPM 240
-uint8_t huidigeBPM;
+uint8_t huidigeBPM = 100;
 
 //STATE maat_inst
 #define aantalMaatSoorten 6
