@@ -6,6 +6,7 @@
 #endif
 
 void (*tim0IRQ)(void);
+uint32_t LDVAL = 1;
 
 void initTim0(){
 	//System Clock Gating Control Register 6 (SIM_SCGC6)
@@ -29,17 +30,23 @@ void Tim0SetIRQ(void (*interruptFunctie)(void)){
 	tim0IRQ = interruptFunctie;
 }
 
-void startTimer0(uint32_t microseconds){
+void startTim0(uint32_t microseconds){
+	LDVAL = (uint32_t)(microseconds * PIT_clock_Freq) - 1;
+
 	//Timer Control Register (PIT_TCTRLn)
 	PIT -> CHANNEL[0].TCTRL &= ~1; 			//disable timer
 
 	//Timer Load Value Register (PIT_LDVALn)
-	PIT -> CHANNEL[0].LDVAL = (uint32_t)(microseconds * PIT_clock_Freq) - 1; 	//set the startvalue on timer 0
+	PIT -> CHANNEL[0].LDVAL = LDVAL; 	//set the startvalue on timer 0
 
 	//Timer Control Register (PIT_TCTRLn)
 	PIT -> CHANNEL[0].TCTRL |= 1; 			//enable timer
 }
 
+float tim0Value(){
+	uint32_t read = PIT -> CHANNEL[0].CVAL;
+	return ((float) read) / LDVAL;
+}
 
 void PIT0_IRQHandler(void){
 	tim0IRQ(); //spring naar IRQ in hoger niveau

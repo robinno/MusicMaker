@@ -3,6 +3,7 @@
 
 void initTim0();
 
-void startTimer0(uint32_t microseconds);
+void startTim0(uint32_t microseconds);
+float tim0Value();
 
 void Tim0SetIRQ(void (*interruptFunctie)(void));
