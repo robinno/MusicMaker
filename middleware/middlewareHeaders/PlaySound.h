@@ -3,6 +3,6 @@
 #include "Sound.h"
 #include <stdint.h>
 
-void playsound_init(uint8_t aantalTracks, struct sound* ActiveTracks);
+void playsound_init(uint8_t aantalSounds, struct sound** geluidjesPtr);
 
-void playsound(uint8_t trackNr);
+void playsound(uint8_t geluidjeNr);
