@@ -4,6 +4,7 @@
 #define TOP_TOPHEADERS_GLOBALS_H_
 
 #define aantalTracks 4
+#define tekstlengte 14
 
 //STATEMACHINE variables:
 enum states {
@@ -21,6 +22,7 @@ uint8_t state = MENU;
 struct {
 	bool active;
 	uint8_t geluidjesIndex;
+	uint8_t kwantisatiePerAantalBeats;
 } tracks[aantalTracks];
 
 //////////////////////
@@ -29,7 +31,6 @@ struct {
 
 //STATE Menu:
 #define aantalMenuTiteltjes (aantalTracks + 2)
-#define tekstlengte 14
 struct {
 	char titeltjes[aantalMenuTiteltjes][tekstlengte];
 	uint8_t index;
@@ -49,5 +50,17 @@ uint8_t maatIndex = 0;
 #define aantalTrackTiteltjes 5
 #define trackTiteltjes {"Terug", "actief", "Kwantisatie", "Geluidje", "Record ..."}
 uint8_t huidigTrackTiteltje = 0;
+
+//STATE resolutie_inst
+struct kwantisatie {
+	char naam[tekstlengte];
+	uint8_t perAantalBeats;
+};
+#define kwartnoot (struct kwantisatie){"kwartnoot", 4}
+#define achtstenoot (struct kwantisatie){"achtstenoot", 2}
+#define zestiendenoot (struct kwantisatie){"zestiendenoot", 1}
+#define aantalKwantisatieOpties 3
+struct kwantisatie* kwantisatieOpties[aantalKwantisatieOpties] = {&kwartnoot, &achtstenoot, &zestiendenoot};
+uint8_t kwantisatie_index = 0;
 
 #endif /* TOP_TOPHEADERS_GLOBALS_H_ */

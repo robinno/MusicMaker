@@ -1,10 +1,9 @@
+#include <stdint.h>
+#include <stdbool.h>
 #include "../../middleware/middlewareHeaders/Sound.h"
 
 #ifndef geluidjesHeader
 #define geluidjesHeader
-
-#include <stdint.h>
-#include <stdbool.h>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //ADD NEW SOUNDS HERE: (don't forget to also add in the array at the bottom!)					//

@@ -1,7 +1,8 @@
-#include "topHeaders/toplevel.h"
-#include "topHeaders/Geluidjes.h"
-#include "topHeaders/GLOBALS.h"
 #include <stdbool.h>
+#include <stdint.h>
+#include "topHeaders/toplevel.h"
+#include "topHeaders/GLOBALS.h"
+#include "topHeaders/Geluidjes.h"
 
 bool PRESSED_DOWN = false;
 bool PRESSED_UP = false;
@@ -115,31 +116,44 @@ void loop() {
 			//show on LCD
 			break;
 		case RESOLUTIE_INST:
-			//TODO
+			if (PRESSED_DOWN) {
+				kwantisatie_index = (kwantisatie_index + 1)
+						% aantalKwantisatieOpties;
+			}
+			if (PRESSED_UP) {
+				kwantisatie_index =
+						(kwantisatie_index == 0) ?
+								(aantalKwantisatieOpties - 1) :
+								(kwantisatie_index - 1);
+			}
+			if (PRESSED_FIRE) {
+				state = TRACK_MENU;
+				tracks[trackIndex].kwantisatiePerAantalBeats = kwantisatieOpties[kwantisatie_index]->perAantalBeats;
+			}
 			break;
 		case GELUID_INST:
 			//zet eigen active geluidje als false:
-			geluidjes[geluidjesIndex]->active == false;
+			geluidjes[tracks[trackIndex].geluidjesIndex]->active = false;
 
 			if (PRESSED_DOWN) {
 				do {
-					geluidjesIndex = (geluidjesIndex + 1) % aantalGeluidjes;
-				} while (geluidjes[geluidjesIndex]->active == true);
+					tracks[trackIndex].geluidjesIndex = (tracks[trackIndex].geluidjesIndex + 1) % aantalGeluidjes;
+				} while (geluidjes[tracks[trackIndex].geluidjesIndex]->active == true);
 			}
 			if (PRESSED_UP) {
 				do {
-					geluidjesIndex =
-							(geluidjesIndex == 0) ?
+					tracks[trackIndex].geluidjesIndex =
+							(tracks[trackIndex].geluidjesIndex == 0) ?
 									(aantalGeluidjes - 1) :
-									(geluidjesIndex - 1);
-				} while (geluidjes[geluidjesIndex]->active == true);
+									(tracks[trackIndex].geluidjesIndex - 1);
+				} while (geluidjes[tracks[trackIndex].geluidjesIndex]->active == true);
 			}
 			if (PRESSED_FIRE) {
 				state = TRACK_MENU;
 			}
 
 			//zet geselecteerde active geluidje als true:
-			geluidjes[geluidjesIndex]->active == true;
+			geluidjes[tracks[trackIndex].geluidjesIndex]->active = true;
 			tracks[trackIndex].active = true;
 			break;
 		case REC_PERCUSSIE:
