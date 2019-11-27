@@ -31,22 +31,23 @@ void playNextSample(){ //THE IRQ for the timer
 //PUBLIC FUNCTIONS
 /////////////////////
 
-//void playsound_init(uint8_t aantalTracks, struct sound* tracks_geluidjes) {
-//	DAC0_init();
-//
-//	amountOfTracks = aantalTracks;
-//	tracks_geluidjes = track;
-//
-//	//set all sounds: not playing and starting index = 0:
-//	for(uint8_t i = 0; i < aantalTracks; i ++){
-//		tracks_geluidjes[i].playing = 0;
-//		tracks_geluidjes[i].index = 0;
-//	}
-//
-//	initTim1();
-//	Tim1SetIRQ(playNextSample);
-//	startTimer1((uint32_t) 1000/fs);
-//}
+void playsound_init(uint8_t aantalTracks, struct sound* ActiveTracks) {
+	//init own variables:
+	amountOfTracks = aantalTracks;
+	tracks_geluidjes = ActiveTracks;
+
+	//set all sounds: not playing and starting index = 0:
+	for(uint8_t i = 0; i < aantalTracks; i ++){
+		tracks_geluidjes[i].playing = 0;
+		tracks_geluidjes[i].index = 0;
+	}
+
+	//init driver layer "components":
+	DAC0_init();
+	initTim1();
+	Tim1SetIRQ(playNextSample);
+	startTimer1((uint32_t) 1000/fs);
+}
 
 void playsound(uint8_t trackNr){
 	tracks_geluidjes[trackNr].playing = 1;
