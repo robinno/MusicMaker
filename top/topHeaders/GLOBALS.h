@@ -4,8 +4,8 @@
 #define TOP_TOPHEADERS_GLOBALS_H_
 
 #define aantalTracks 4
-#define tekstlengte 14
-#define BeatArrLengte 48
+#define tekstlengte 16
+#define BeatArrLengte 48 * 4
 
 //STATEMACHINE variables:
 enum states {
@@ -45,7 +45,7 @@ uint8_t huidigeBPM = 100;
 
 //STATE maat_inst
 #define aantalMaatSoorten 6
-#define MaatMogelijkheden {3, 4, 6, 8, 12, 16}
+const uint8_t MaatMogelijkheden[] = {3, 4, 6, 8, 12, 16};
 uint8_t maatIndex = 0;
 
 //STATE track_menu

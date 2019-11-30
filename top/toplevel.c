@@ -36,7 +36,10 @@ void beat(void) { //When the beat timer throws an interrupt
 		if (tracks[i].active && tracks[i].beat[beatIndex])
 			playsound(tracks[i].geluidjesIndex);
 
-	beatIndex = (beatIndex + 1) % BeatArrLengte;
+	//update beatIndex TODO
+	beatIndex = (beatIndex + BeatArrLengte / (MaatMogelijkheden[maatIndex] * 4)) % BeatArrLengte;
+
+	print_metronome(beatIndex / 4, BeatArrLengte / 4); //Per kwartnoot tonen
 }
 
 //////////
@@ -46,6 +49,9 @@ void beat(void) { //When the beat timer throws an interrupt
 void init() {
 	//INIT peripherals:
 	//TODO: init joystick
+	middleware_initJoyStick(UP, knopBoven);
+	middleware_initJoyStick(DOWN, knopOnder);
+	middleware_initJoyStick(FIRE, knopFire);
 	initReadPot(minimumBPM, maximumBPM);
 	initTimer0();
 	Timer0SetIRQ(beat);
@@ -62,7 +68,7 @@ void init() {
 	}
 
 	//INIT BPM:
-	startTimer0((uint16_t) (((uint32_t) huidigeBPM * 1000000) / 60));
+	startTimer0(((uint32_t) huidigeBPM * 1000000) / 60);
 
 	//INIT TRACKS:
 	for (int i = 0; i < aantalTracks; i++) {
@@ -70,7 +76,7 @@ void init() {
 	}
 
 	//INIT RECORD:
-	setLED(RED, 0);
+	setLED(RED, 1);
 
 	//PASS TRACKS TO LOWER LEVEL:
 	playsound_init(aantalGeluidjes, geluidjes);
@@ -106,10 +112,16 @@ void loop() {
 				case 0: //BPM instellen
 					state = BPM_INST;
 					print_menuName("BPM INSTELLEN");
+					char bpmTekst[16];
+					sprintf(bpmTekst, "BPM = %i", huidigeBPM);
+					print_menuItem(bpmTekst);
 					break;
 				case 1: //MAAT instellen
 					state = MAAT_INST;
 					print_menuName("MAAT INSTELLEN");
+					char maatTekst[16];
+					sprintf(maatTekst, "maat = %i/4", MaatMogelijkheden[maatIndex]);
+					print_menuItem(maatTekst);
 					break;
 				default: //ALLE TRACKS:
 					state = TRACK_MENU;
@@ -123,30 +135,43 @@ void loop() {
 			break;
 		case BPM_INST:
 			huidigeBPM = readPot();
-			if (huidigeBPM != vorigeBPM) //Edge detectie: timer en scherm updaten als nodig.
-				startTimer0(
-						(uint16_t) (((uint32_t) huidigeBPM * 1000000) / 60));
+			if (huidigeBPM != vorigeBPM){ //Edge detectie: timer en scherm updaten als nodig.
+				startTimer0(((uint32_t) huidigeBPM) * (1000000 / 60));
+
+				char bpmTekst[16];
+				sprintf(bpmTekst, "BPM = %i", huidigeBPM);
+				print_menuItem(bpmTekst);
+			}
 
 			if (PRESSED_FIRE) {
 				state = MENU;
 				print_menuName("MENU");
+				print_menuItem(menu.titeltjes[menu.index]);
 			}
 
 			vorigeBPM = huidigeBPM;
-			//show on LCD
 			break;
 		case MAAT_INST:
 			if (PRESSED_DOWN) {
 				maatIndex = (maatIndex + 1) % aantalMaatSoorten;
+
+				char maatTekst[16];
+				sprintf(maatTekst, "maat = %i/4", MaatMogelijkheden[maatIndex]);
+				print_menuItem(maatTekst);
 			}
 			if (PRESSED_UP) {
 				maatIndex =
 						(maatIndex == 0) ?
 								(aantalMaatSoorten - 1) : (maatIndex - 1);
+
+				char maatTekst[16];
+				sprintf(maatTekst, "maat = %i/4", MaatMogelijkheden[maatIndex]);
+				print_menuItem(maatTekst);
 			}
 			if (PRESSED_FIRE) {
 				state = MENU;
 				print_menuName("MENU");
+				print_menuItem(menu.titeltjes[menu.index]);
 			}
 			//show on LCD
 			break;
@@ -293,13 +318,15 @@ void toplevel() {
 
 	//korte test:
 
-	middleware_init_LCD();
-	print_text(3, "MENU");
-	print_menuName("MENU");
+//	middleware_init_LCD();
+//	//print_text(3, "MENU");
+//	print_menuName("MENU");
 
-//	init();
-//	while(1){
-//		loop();
-//	}
+
+
+	init();
+	while(1){
+		loop();
+	}
 }
 

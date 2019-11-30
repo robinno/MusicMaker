@@ -1,4 +1,5 @@
 #include "../../drivers/driverHeaders/LCDdisplay.h"
+#include <string.h>
 
 /*
 * Prints menuname on the center of the first line of the LCD-screen.
