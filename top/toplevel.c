@@ -29,7 +29,7 @@ void knopFire(void) {
 
 void beat(void) { //When the beat timer throws an interrupt
 	for (uint8_t i = 0; i < aantalTracks; i++)
-		if (tracks[i].active && tracks[i].beat[beatIndex] == true)
+		if (tracks[i].active && tracks[i].beat[beatIndex])
 			playsound(tracks[i].geluidjesIndex);
 
 	beatIndex = (beatIndex + 1) % BeatArrLengte;
@@ -54,7 +54,7 @@ void init() {
 		sprintf(menu.titeltjes[i + 2], "track %i menu", i);
 	}
 
-	//INIT BPM: //TODO wegdoen en verplaatsen naar BPM_INST
+	//INIT BPM:
 	startTimer0((uint16_t) (((uint32_t) huidigeBPM * 1000000) / 60));
 
 	//INIT TRACKS:
@@ -71,6 +71,8 @@ void init() {
 //////////////////
 
 void loop() {
+	uint8_t vorigeBPM = 0;
+
 	while (true) {
 		switch (state) {
 		case MENU:
@@ -101,9 +103,14 @@ void loop() {
 			break;
 		case BPM_INST:
 			huidigeBPM = readPot();
+			if(huidigeBPM != vorigeBPM) //Edge detectie:
+				startTimer0((uint16_t) (((uint32_t) huidigeBPM * 1000000) / 60));
+
 			if (PRESSED_FIRE) {
 				state = MENU;
 			}
+
+			vorigeBPM = huidigeBPM;
 			//show on LCD
 			break;
 		case MAAT_INST:
@@ -199,7 +206,44 @@ void loop() {
 			tracks[trackIndex].active = true;
 			break;
 		case REC_PERCUSSIE:
-			//TODO
+			//wachten met record tot start van de maat:
+			if (beatIndex == 0) {
+				recording = true;
+				for (uint8_t i = 0; i < BeatArrLengte; i++) { //clear current content of track
+					tracks[trackIndex].beat[i] = false;
+				}
+				//SET LED
+			} else if (beatIndex >= BeatArrLengte - 1) {
+				recording = false;
+				//SET LED
+			}
+
+			//When recording:
+			if (recording) {
+				if (PRESSED_FIRE) {
+					//choose closest beat
+					uint8_t rechtGetrokkenVoorKwantisatie =
+							(timer0Value() < 0.5) ?
+									beatIndex : (beatIndex + 1) % BeatArrLengte;
+
+					//perform quantization:
+					uint8_t deler =
+							kwantisatieOpties[kwantisatie_index] -> perAantalBeats;
+					uint8_t middenVanInterval = (beatIndex / deler) * deler
+							+ (deler / 2);
+
+					uint8_t naKwantisatie = 0;
+					if (rechtGetrokkenVoorKwantisatie <= middenVanInterval) {
+						naKwantisatie = (beatIndex / deler) * deler;
+					} else {
+						naKwantisatie = ((beatIndex / deler + 1) * deler)
+								% BeatArrLengte;
+					}
+
+					//toekennen aan beat array voor die track
+					tracks[trackIndex].beat[naKwantisatie] = true;
+				}
+			}
 			break;
 		}
 
@@ -219,16 +263,14 @@ void toplevel() {
 	//Testing the playsounds with timer:
 	init();
 	tracks[1].active = true;
-	tracks[1].geluidjesIndex = 1;//kick
+	tracks[1].geluidjesIndex = 1; //kick
 
-	for(int i = 0; i < 48; i++)
+	for (int i = 0; i < 48; i++)
 		tracks[1].beat[i] = false;
 
 	tracks[1].beat[0] = true;
 	tracks[1].beat[12] = true;
 	tracks[1].beat[30] = true;
-
-
 
 	while (1)
 		; //wait loop.

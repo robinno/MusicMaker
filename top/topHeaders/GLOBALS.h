@@ -65,4 +65,7 @@ struct kwantisatie {
 struct kwantisatie* kwantisatieOpties[aantalKwantisatieOpties] = {&kwartnoot, &achtstenoot, &zestiendenoot};
 uint8_t kwantisatie_index = 0;
 
+//STATE recording
+bool recording = false;
+
 #endif /* TOP_TOPHEADERS_GLOBALS_H_ */
