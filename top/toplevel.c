@@ -28,7 +28,6 @@ void knopOnder(void) {
 
 void knopFire(void) {
 	PRESSED_FIRE = true;
-	printf("in fire\n");
 }
 
 void beat(void) { //When the beat timer throws an interrupt
@@ -296,6 +295,8 @@ void toplevel() {
 	middleware_init_LCD();
 	print_text(3, "MENU");
 	print_menuName("MENU");
+
+	middleware_initJoyStick(FIRE, knopFire);
 
 //	init();
 //	while(1){
