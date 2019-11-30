@@ -291,7 +291,9 @@ void toplevel() {
 	//printf("in toplevel \n\r");
 
 	//korte test:
+
 	middleware_init_LCD();
+	print_text(3, "MENU");
 	print_menuName("MENU");
 
 //	init();
