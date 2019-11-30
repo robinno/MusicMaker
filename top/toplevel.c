@@ -11,6 +11,9 @@ bool PRESSED_FIRE = false;
 uint8_t trackIndex = 0;
 uint8_t beatIndex = 0;
 
+char trackMenuNaam[] = "TRACK   INST";
+#define trackIndexPosInMenuNaam 6
+
 //////////////////////////
 // INTERRUPT HANDLERS	//
 //////////////////////////
@@ -41,9 +44,12 @@ void beat(void) { //When the beat timer throws an interrupt
 
 void init() {
 	//INIT peripherals:
+	//TODO: init joystick
 	initReadPot(minimumBPM, maximumBPM);
 	initTimer0();
 	Timer0SetIRQ(beat);
+	initRGB();
+	middleware_init_LCD();
 
 	//INIT MENU:
 	menu.index = 0;
@@ -62,8 +68,16 @@ void init() {
 		tracks[i].active = false;
 	}
 
+	//INIT RECORD:
+	setLED(RED, 0);
+
 	//PASS TRACKS TO LOWER LEVEL:
 	playsound_init(aantalGeluidjes, geluidjes);
+
+	//starting state:
+	print_menuName("MENU");
+	print_menuItem(menu.titeltjes[menu.index]);
+	state = MENU;
 }
 
 //////////////////
@@ -78,36 +92,43 @@ void loop() {
 		case MENU:
 			if (PRESSED_DOWN) {
 				menu.index = (menu.index + 1) % aantalMenuTiteltjes;
+				print_menuItem(menu.titeltjes[menu.index]);
 			}
 			if (PRESSED_UP) {
 				menu.index =
 						(menu.index == 0) ?
 								(aantalMenuTiteltjes - 1) : (menu.index - 1);
+				print_menuItem(menu.titeltjes[menu.index]);
 			}
 			if (PRESSED_FIRE) {
 				switch (menu.index) {
 				case 0: //BPM instellen
 					state = BPM_INST;
+					print_menuName("BPM INSTELLEN");
 					break;
 				case 1: //MAAT instellen
 					state = MAAT_INST;
+					print_menuName("MAAT INSTELLEN");
 					break;
 				default: //ALLE TRACKS:
 					state = TRACK_MENU;
 					trackIndex = menu.index - 2;
+
+					trackMenuNaam[trackIndexPosInMenuNaam] = trackIndex + 48; //naar ASCII cijfer
+					print_menuName(trackMenuNaam);
 					break;
 				}
 			}
-
-			//show MENU_titeltjes[huidigeMenuTitel] op LCD
 			break;
 		case BPM_INST:
 			huidigeBPM = readPot();
-			if(huidigeBPM != vorigeBPM) //Edge detectie:
-				startTimer0((uint16_t) (((uint32_t) huidigeBPM * 1000000) / 60));
+			if (huidigeBPM != vorigeBPM) //Edge detectie: timer en scherm updaten als nodig.
+				startTimer0(
+						(uint16_t) (((uint32_t) huidigeBPM * 1000000) / 60));
 
 			if (PRESSED_FIRE) {
 				state = MENU;
+				print_menuName("MENU");
 			}
 
 			vorigeBPM = huidigeBPM;
@@ -124,6 +145,7 @@ void loop() {
 			}
 			if (PRESSED_FIRE) {
 				state = MENU;
+				print_menuName("MENU");
 			}
 			//show on LCD
 			break;
@@ -142,18 +164,22 @@ void loop() {
 				switch (huidigTrackTiteltje) {
 				case 0: //terug naar menu
 					state = MENU;
+					print_menuName("MENU");
 					break;
 				case 1:
 					tracks[trackIndex].active = !(tracks[trackIndex].active); //toggle active.
 					break;
 				case 2: //Kwantisatie
 					state = RESOLUTIE_INST;
+					print_menuName("RESOLUTIE");
 					break;
 				case 3: //geluidje:
 					state = GELUID_INST;
+					print_menuName("GELUID");
 					break;
 				case 4: //Record:
 					state = REC_PERCUSSIE;
+					print_menuName("RECORDING");
 					break;
 				}
 			}
@@ -174,6 +200,7 @@ void loop() {
 				state = TRACK_MENU;
 				tracks[trackIndex].kwantisatiePerAantalBeats =
 						kwantisatieOpties[kwantisatie_index]->perAantalBeats;
+				print_menuName(trackMenuNaam);
 			}
 			break;
 		case GELUID_INST:
@@ -199,6 +226,7 @@ void loop() {
 			}
 			if (PRESSED_FIRE) {
 				state = TRACK_MENU;
+				print_menuName(trackMenuNaam);
 			}
 
 			//zet geselecteerde active geluidje als true:
@@ -212,10 +240,12 @@ void loop() {
 				for (uint8_t i = 0; i < BeatArrLengte; i++) { //clear current content of track
 					tracks[trackIndex].beat[i] = false;
 				}
-				//SET LED
+				setLED(RED, 1);
 			} else if (beatIndex >= BeatArrLengte - 1) {
 				recording = false;
-				//SET LED
+				setLED(RED, 0);
+				state = TRACK_MENU;
+				print_menuName(trackMenuNaam);
 			}
 
 			//When recording:
@@ -228,7 +258,7 @@ void loop() {
 
 					//perform quantization:
 					uint8_t deler =
-							kwantisatieOpties[kwantisatie_index] -> perAantalBeats;
+							kwantisatieOpties[kwantisatie_index]->perAantalBeats;
 					uint8_t middenVanInterval = (beatIndex / deler) * deler
 							+ (deler / 2);
 
@@ -258,21 +288,15 @@ void loop() {
 //////////
 
 void toplevel() {
-	printf("in toplevel \n\r");
+	//printf("in toplevel \n\r");
 
-	//Testing the playsounds with timer:
-	init();
-	tracks[1].active = true;
-	tracks[1].geluidjesIndex = 1; //kick
+	//korte test:
+	middleware_init_LCD();
+	print_menuName("MENU");
 
-	for (int i = 0; i < 48; i++)
-		tracks[1].beat[i] = false;
-
-	tracks[1].beat[0] = true;
-	tracks[1].beat[12] = true;
-	tracks[1].beat[30] = true;
-
-	while (1)
-		; //wait loop.
+//	init();
+//	while(1){
+//		loop();
+//	}
 }
 
