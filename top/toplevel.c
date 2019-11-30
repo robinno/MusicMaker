@@ -28,7 +28,6 @@ void knopOnder(void) {
 
 void knopFire(void) {
 	PRESSED_FIRE = true;
-	printf("in fire\n");
 }
 
 void beat(void) { //When the beat timer throws an interrupt
