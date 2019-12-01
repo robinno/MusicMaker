@@ -1,18 +1,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "topHeaders/toplevel.h"
-#include "topHeaders/GLOBALS.h"
-#include "topHeaders/Geluidjes.h"
+
 
 bool PRESSED_DOWN = false;
 bool PRESSED_UP = false;
 bool PRESSED_FIRE = false;
-
-uint8_t trackIndex = 0;
-uint8_t beatIndex = 0;
-
-char trackMenuNaam[] = "TRACK   INST";
-#define trackIndexPosInMenuNaam 6
 
 //////////////////////////
 // INTERRUPT HANDLERS	//
@@ -31,9 +24,7 @@ void knopFire(void) {
 }
 
 void beat(void) { //When the beat timer throws an interrupt
-	for (uint8_t i = 0; i < aantalTracks; i++)
-		if (tracks[i].active && tracks[i].beat[beatIndex])
-			playsound(tracks[i].geluidjesIndex);
+	playActiveSounds();
 
 	//update beatIndex
 	beatIndex = beatIndex + BeatArrLengte / (MaatMogelijkheden[maatIndex] * 4);
@@ -48,43 +39,8 @@ void beat(void) { //When the beat timer throws an interrupt
 //////////
 
 void init() {
-	//INIT peripherals:
-	middleware_initJoyStick(UP, knopBoven);
-	middleware_initJoyStick(DOWN, knopOnder);
-	middleware_initJoyStick(FIRE, knopFire);
-	initReadPot(minimumBPM, maximumBPM);
-	initTimer0();
-	Timer0SetIRQ(beat);
-	initRGB();
-	middleware_init_LCD();
-
-	//INIT MENU:
-	menu.index = 0;
-
-	sprintf(menu.titeltjes[0], "BPM instellen");
-	sprintf(menu.titeltjes[1], "Maat instellen");
-	for (int i = 0; i < aantalTracks; i++) {
-		sprintf(menu.titeltjes[i + 2], "track %i menu", i);
-	}
-
-	//INIT BPM:
-	startTimer0((1000000 * 60 / 4) / ((uint32_t) huidigeBPM)); //delen door 4 want BPM is voor kwartnoot, en beat is op 16e noot
-
-	//INIT TRACKS:
-	for (int i = 0; i < aantalTracks; i++) {
-		tracks[i].active = false;
-	}
-
-	//INIT RECORD:
-	setLED(RED, 1);
-
-	//PASS TRACKS TO LOWER LEVEL:
-	playsound_init(aantalGeluidjes, geluidjes);
-
-	//starting state:
-	print_menuName("MENU");
-	print_menuItem(menu.titeltjes[menu.index]);
-	state = MENU;
+	initPeripherals(knopBoven, knopOnder, knopFire, beat);
+	initStates();
 }
 
 //////////////////
@@ -92,242 +48,28 @@ void init() {
 //////////////////
 
 void loop() {
-	uint8_t vorigeBPM = 0;
-
 	while (true) {
 		switch (state) {
 		case MENU:
-			if (PRESSED_DOWN) {
-				menu.index = (menu.index + 1) % aantalMenuTiteltjes;
-				print_menuItem(menu.titeltjes[menu.index]);
-			}
-			if (PRESSED_UP) {
-				menu.index =
-						(menu.index == 0) ?
-								(aantalMenuTiteltjes - 1) : (menu.index - 1);
-				print_menuItem(menu.titeltjes[menu.index]);
-			}
-			if (PRESSED_FIRE) {
-				switch (menu.index) {
-				case 0: //BPM instellen
-					state = BPM_INST;
-					print_menuName("BPM INSTELLEN");
-					char bpmTekst[16];
-					sprintf(bpmTekst, "BPM = %i", huidigeBPM);
-					print_menuItem(bpmTekst);
-					break;
-				case 1: //MAAT instellen
-					//clear all tracks:
-					for (uint8_t i = 0; i < aantalTracks; i++) {
-						tracks[i].active = false;
-						for(uint8_t j = 0; j < BeatArrLengte; j++){
-							tracks[i].beat[j] = false;
-						}
-					}
-
-
-					state = MAAT_INST;
-					print_menuName("MAAT INSTELLEN");
-					char maatTekst[16];
-					sprintf(maatTekst, "maat = %i/4",
-							MaatMogelijkheden[maatIndex]);
-					print_menuItem(maatTekst);
-					break;
-				default: //ALLE TRACKS:
-					state = TRACK_MENU;
-					trackIndex = menu.index - 2;
-
-					trackMenuNaam[trackIndexPosInMenuNaam] = trackIndex + 48; //naar ASCII cijfer
-					print_menuName(trackMenuNaam);
-					huidigTrackTiteltje = 0;
-					print_menuItem(trackTiteltjes[huidigTrackTiteltje]);
-					break;
-				}
-			}
+			MENU_state(PRESSED_DOWN, PRESSED_UP, PRESSED_FIRE);
 			break;
 		case BPM_INST:
-			huidigeBPM = readPot();
-			if (huidigeBPM != vorigeBPM) { //Edge detectie: timer en scherm updaten als nodig.
-				startTimer0((1000000 * 60 / 4) / ((uint32_t) huidigeBPM)); //delen door 4 want BPM is voor kwartnoot, en beat is op 16e noot
-
-				char bpmTekst[16];
-				sprintf(bpmTekst, "BPM = %i", huidigeBPM);
-				print_menuItem(bpmTekst);
-			}
-
-			if (PRESSED_FIRE) {
-				state = MENU;
-				print_menuName("MENU");
-				print_menuItem(menu.titeltjes[menu.index]);
-			}
-
-			vorigeBPM = huidigeBPM;
+			BPM_INST_state(PRESSED_FIRE);
 			break;
 		case MAAT_INST:
-			if (PRESSED_DOWN) {
-				maatIndex = (maatIndex + 1) % aantalMaatSoorten;
-
-				char maatTekst[16];
-				sprintf(maatTekst, "maat = %i/4", MaatMogelijkheden[maatIndex]);
-				print_menuItem(maatTekst);
-			}
-			if (PRESSED_UP) {
-				maatIndex =
-						(maatIndex == 0) ?
-								(aantalMaatSoorten - 1) : (maatIndex - 1);
-
-				char maatTekst[16];
-				sprintf(maatTekst, "maat = %i/4", MaatMogelijkheden[maatIndex]);
-				print_menuItem(maatTekst);
-			}
-			if (PRESSED_FIRE) {
-				state = MENU;
-				print_menuName("MENU");
-				print_menuItem(menu.titeltjes[menu.index]);
-			}
+			MAAT_INST_state(PRESSED_DOWN, PRESSED_UP, PRESSED_FIRE);
 			break;
 		case TRACK_MENU:
-			if (PRESSED_DOWN) {
-				huidigTrackTiteltje = (huidigTrackTiteltje + 1)
-						% aantalTrackTiteltjes;
-				print_menuItem(trackTiteltjes[huidigTrackTiteltje]);
-			}
-			if (PRESSED_UP) {
-				huidigTrackTiteltje =
-						(huidigTrackTiteltje == 0) ?
-								(aantalTrackTiteltjes - 1) :
-								(huidigTrackTiteltje - 1);
-				print_menuItem(trackTiteltjes[huidigTrackTiteltje]);
-			}
-			if (PRESSED_FIRE) {
-				switch (huidigTrackTiteltje) {
-				case 0: //terug naar menu
-					state = MENU;
-					print_menuName("MENU");
-					print_menuItem(menu.titeltjes[menu.index]);
-					break;
-				case 1:
-					tracks[trackIndex].active = !(tracks[trackIndex].active); //toggle active.
-					break;
-				case 2: //Kwantisatie
-					state = RESOLUTIE_INST;
-					print_menuName("RESOLUTIE");
-					print_menuItem(kwantisatieOpties[kwantisatie_index]->naam);
-					break;
-				case 3: //geluidje:
-					state = GELUID_INST;
-					print_menuName("GELUID");
-					print_menuItem(geluidjes[tracks[trackIndex].geluidjesIndex]->name);
-					break;
-				case 4: //Record:
-					state = REC_PERCUSSIE;
-					print_menuName("RECORDING");
-					print_menuItem("wait ...");
-					break;
-				}
-			}
-			//show on LCD
+			TRACK_MENU_state(PRESSED_DOWN, PRESSED_UP, PRESSED_FIRE);
 			break;
 		case RESOLUTIE_INST:
-			if (PRESSED_DOWN) {
-				kwantisatie_index = (kwantisatie_index + 1)
-						% aantalKwantisatieOpties;
-				print_menuItem(kwantisatieOpties[kwantisatie_index]->naam);
-			}
-			if (PRESSED_UP) {
-				kwantisatie_index =
-						(kwantisatie_index == 0) ?
-								(aantalKwantisatieOpties - 1) :
-								(kwantisatie_index - 1);
-				print_menuItem(kwantisatieOpties[kwantisatie_index]->naam);
-			}
-			if (PRESSED_FIRE) {
-				state = TRACK_MENU;
-				tracks[trackIndex].kwantisatiePerAantalBeats =
-						kwantisatieOpties[kwantisatie_index]->perAantalBeats;
-				print_menuName(trackMenuNaam);
-				print_menuItem(trackTiteltjes[huidigTrackTiteltje]);
-			}
+			RESOLUTIE_INST_state(PRESSED_DOWN, PRESSED_UP, PRESSED_FIRE);
 			break;
 		case GELUID_INST:
-			//zet eigen active geluidje als false:
-			geluidjes[tracks[trackIndex].geluidjesIndex]->active = false;
-
-			if (PRESSED_DOWN) {
-				do {
-					tracks[trackIndex].geluidjesIndex =
-							(tracks[trackIndex].geluidjesIndex + 1)
-									% aantalGeluidjes;
-				} while (geluidjes[tracks[trackIndex].geluidjesIndex]->active
-						== true);
-
-				print_menuItem(geluidjes[tracks[trackIndex].geluidjesIndex]->name);
-			}
-			if (PRESSED_UP) {
-				do {
-					tracks[trackIndex].geluidjesIndex =
-							(tracks[trackIndex].geluidjesIndex == 0) ?
-									(aantalGeluidjes - 1) :
-									(tracks[trackIndex].geluidjesIndex - 1);
-				} while (geluidjes[tracks[trackIndex].geluidjesIndex]->active
-						== true);
-
-				print_menuItem(geluidjes[tracks[trackIndex].geluidjesIndex]->name);
-			}
-			if (PRESSED_FIRE) {
-				state = TRACK_MENU;
-				print_menuName(trackMenuNaam);
-				print_menuItem(trackTiteltjes[huidigTrackTiteltje]);
-			}
-
-			//zet geselecteerde active geluidje als true:
-			geluidjes[tracks[trackIndex].geluidjesIndex]->active = true;
-			tracks[trackIndex].active = true;
+			GELUID_INST_state(PRESSED_DOWN, PRESSED_UP, PRESSED_FIRE);
 			break;
 		case REC_PERCUSSIE:
-			//wachten met record tot start van de maat:
-			if (beatIndex == 0) {
-				recording = true;
-				for (uint8_t i = 0; i < BeatArrLengte; i++) { //clear current content of track
-					tracks[trackIndex].beat[i] = false;
-				}
-				setLED(RED, 1);
-				print_menuItem("recording ...");
-			} else if (beatIndex >= BeatArrLengte - 1) {
-				recording = false;
-				setLED(RED, 0);
-				state = TRACK_MENU;
-				print_menuName(trackMenuNaam);
-				print_menuItem(trackTiteltjes[huidigTrackTiteltje]);
-			}
-
-			//When recording:
-			if (recording) {
-				if (PRESSED_FIRE) {
-					//choose closest beat
-					uint8_t rechtGetrokkenVoorKwantisatie =
-							(timer0Value() < 0.5) ?
-									beatIndex : (beatIndex + 1) % BeatArrLengte;
-
-					//perform quantization:
-					uint8_t deler =
-							kwantisatieOpties[kwantisatie_index]->perAantalBeats;
-					uint8_t middenVanInterval = (beatIndex / deler) * deler
-							+ (deler / 2);
-
-					uint8_t naKwantisatie = 0;
-					if (rechtGetrokkenVoorKwantisatie <= middenVanInterval) {
-						naKwantisatie = (beatIndex / deler) * deler;
-					} else {
-						naKwantisatie = ((beatIndex / deler + 1) * deler)
-								% BeatArrLengte;
-					}
-
-					//toekennen aan beat array voor die track
-					tracks[trackIndex].beat[naKwantisatie] = true;
-				}
-			}
-			break;
+			RECORDING(PRESSED_FIRE);
 		}
 
 		PRESSED_DOWN = false;

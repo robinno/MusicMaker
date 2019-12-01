@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifndef TOP_TOPHEADERS_GLOBALS_H_
 #define TOP_TOPHEADERS_GLOBALS_H_
@@ -26,6 +27,9 @@ struct {
 	uint8_t kwantisatiePerAantalBeats;
 	bool beat[BeatArrLengte];
 } tracks[aantalTracks];
+
+uint8_t trackIndex = 0;
+uint8_t beatIndex = 0;
 
 //////////////////////
 // STATE variables:	//

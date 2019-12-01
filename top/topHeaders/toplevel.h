@@ -3,11 +3,6 @@
 
 
 //INCLUDES
-#include "../../middleware/middlewareHeaders/PlaySound.h"
-#include "../../middleware/middlewareHeaders/ReadJoystick.h"
-#include "../../middleware/middlewareHeaders/Timer0.h"
-#include "../../middleware/middlewareHeaders/ReadPot.h"
-#include "../../middleware/middlewareHeaders/WriteDisplay.h"
-#include "../../middleware/middlewareHeaders/WriteLED.h"
+#include "StateFunctions.h"
 
 void toplevel();
