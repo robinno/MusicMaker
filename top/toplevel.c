@@ -35,8 +35,10 @@ void beat(void) { //When the beat timer throws an interrupt
 		if (tracks[i].active && tracks[i].beat[beatIndex])
 			playsound(tracks[i].geluidjesIndex);
 
-	//update beatIndex TODO
-	beatIndex = (beatIndex + BeatArrLengte / (MaatMogelijkheden[maatIndex] * 4)) % BeatArrLengte;
+	//update beatIndex
+	beatIndex = beatIndex + BeatArrLengte / (MaatMogelijkheden[maatIndex] * 4);
+	if (beatIndex >= BeatArrLengte)
+		beatIndex = 0;
 
 	print_metronome(beatIndex / 4, BeatArrLengte / 4); //Per kwartnoot tonen
 }
@@ -47,7 +49,6 @@ void beat(void) { //When the beat timer throws an interrupt
 
 void init() {
 	//INIT peripherals:
-	//TODO: init joystick
 	middleware_initJoyStick(UP, knopBoven);
 	middleware_initJoyStick(DOWN, knopOnder);
 	middleware_initJoyStick(FIRE, knopFire);
@@ -67,7 +68,7 @@ void init() {
 	}
 
 	//INIT BPM:
-	startTimer0(((uint32_t) huidigeBPM * 1000000) / 60);
+	startTimer0((1000000 * 60 / 4) / ((uint32_t) huidigeBPM)); //delen door 4 want BPM is voor kwartnoot, en beat is op 16e noot
 
 	//INIT TRACKS:
 	for (int i = 0; i < aantalTracks; i++) {
@@ -116,10 +117,20 @@ void loop() {
 					print_menuItem(bpmTekst);
 					break;
 				case 1: //MAAT instellen
+					//clear all tracks:
+					for (uint8_t i = 0; i < aantalTracks; i++) {
+						tracks[i].active = false;
+						for(uint8_t j = 0; j < BeatArrLengte; j++){
+							tracks[i].beat[j] = false;
+						}
+					}
+
+
 					state = MAAT_INST;
 					print_menuName("MAAT INSTELLEN");
 					char maatTekst[16];
-					sprintf(maatTekst, "maat = %i/4", MaatMogelijkheden[maatIndex]);
+					sprintf(maatTekst, "maat = %i/4",
+							MaatMogelijkheden[maatIndex]);
 					print_menuItem(maatTekst);
 					break;
 				default: //ALLE TRACKS:
@@ -128,14 +139,16 @@ void loop() {
 
 					trackMenuNaam[trackIndexPosInMenuNaam] = trackIndex + 48; //naar ASCII cijfer
 					print_menuName(trackMenuNaam);
+					huidigTrackTiteltje = 0;
+					print_menuItem(trackTiteltjes[huidigTrackTiteltje]);
 					break;
 				}
 			}
 			break;
 		case BPM_INST:
 			huidigeBPM = readPot();
-			if (huidigeBPM != vorigeBPM){ //Edge detectie: timer en scherm updaten als nodig.
-				startTimer0(((uint32_t) huidigeBPM) * (1000000 / 60));
+			if (huidigeBPM != vorigeBPM) { //Edge detectie: timer en scherm updaten als nodig.
+				startTimer0((1000000 * 60 / 4) / ((uint32_t) huidigeBPM)); //delen door 4 want BPM is voor kwartnoot, en beat is op 16e noot
 
 				char bpmTekst[16];
 				sprintf(bpmTekst, "BPM = %i", huidigeBPM);
@@ -172,24 +185,26 @@ void loop() {
 				print_menuName("MENU");
 				print_menuItem(menu.titeltjes[menu.index]);
 			}
-			//show on LCD
 			break;
 		case TRACK_MENU:
 			if (PRESSED_DOWN) {
 				huidigTrackTiteltje = (huidigTrackTiteltje + 1)
 						% aantalTrackTiteltjes;
+				print_menuItem(trackTiteltjes[huidigTrackTiteltje]);
 			}
 			if (PRESSED_UP) {
 				huidigTrackTiteltje =
 						(huidigTrackTiteltje == 0) ?
 								(aantalTrackTiteltjes - 1) :
 								(huidigTrackTiteltje - 1);
+				print_menuItem(trackTiteltjes[huidigTrackTiteltje]);
 			}
 			if (PRESSED_FIRE) {
 				switch (huidigTrackTiteltje) {
 				case 0: //terug naar menu
 					state = MENU;
 					print_menuName("MENU");
+					print_menuItem(menu.titeltjes[menu.index]);
 					break;
 				case 1:
 					tracks[trackIndex].active = !(tracks[trackIndex].active); //toggle active.
@@ -197,14 +212,17 @@ void loop() {
 				case 2: //Kwantisatie
 					state = RESOLUTIE_INST;
 					print_menuName("RESOLUTIE");
+					print_menuItem(kwantisatieOpties[kwantisatie_index]->naam);
 					break;
 				case 3: //geluidje:
 					state = GELUID_INST;
 					print_menuName("GELUID");
+					print_menuItem(geluidjes[tracks[trackIndex].geluidjesIndex]->name);
 					break;
 				case 4: //Record:
 					state = REC_PERCUSSIE;
 					print_menuName("RECORDING");
+					print_menuItem("wait ...");
 					break;
 				}
 			}
@@ -214,18 +232,21 @@ void loop() {
 			if (PRESSED_DOWN) {
 				kwantisatie_index = (kwantisatie_index + 1)
 						% aantalKwantisatieOpties;
+				print_menuItem(kwantisatieOpties[kwantisatie_index]->naam);
 			}
 			if (PRESSED_UP) {
 				kwantisatie_index =
 						(kwantisatie_index == 0) ?
 								(aantalKwantisatieOpties - 1) :
 								(kwantisatie_index - 1);
+				print_menuItem(kwantisatieOpties[kwantisatie_index]->naam);
 			}
 			if (PRESSED_FIRE) {
 				state = TRACK_MENU;
 				tracks[trackIndex].kwantisatiePerAantalBeats =
 						kwantisatieOpties[kwantisatie_index]->perAantalBeats;
 				print_menuName(trackMenuNaam);
+				print_menuItem(trackTiteltjes[huidigTrackTiteltje]);
 			}
 			break;
 		case GELUID_INST:
@@ -239,6 +260,8 @@ void loop() {
 									% aantalGeluidjes;
 				} while (geluidjes[tracks[trackIndex].geluidjesIndex]->active
 						== true);
+
+				print_menuItem(geluidjes[tracks[trackIndex].geluidjesIndex]->name);
 			}
 			if (PRESSED_UP) {
 				do {
@@ -248,10 +271,13 @@ void loop() {
 									(tracks[trackIndex].geluidjesIndex - 1);
 				} while (geluidjes[tracks[trackIndex].geluidjesIndex]->active
 						== true);
+
+				print_menuItem(geluidjes[tracks[trackIndex].geluidjesIndex]->name);
 			}
 			if (PRESSED_FIRE) {
 				state = TRACK_MENU;
 				print_menuName(trackMenuNaam);
+				print_menuItem(trackTiteltjes[huidigTrackTiteltje]);
 			}
 
 			//zet geselecteerde active geluidje als true:
@@ -266,11 +292,13 @@ void loop() {
 					tracks[trackIndex].beat[i] = false;
 				}
 				setLED(RED, 1);
+				print_menuItem("recording ...");
 			} else if (beatIndex >= BeatArrLengte - 1) {
 				recording = false;
 				setLED(RED, 0);
 				state = TRACK_MENU;
 				print_menuName(trackMenuNaam);
+				print_menuItem(trackTiteltjes[huidigTrackTiteltje]);
 			}
 
 			//When recording:
@@ -315,16 +343,16 @@ void loop() {
 void toplevel() {
 	//printf("in toplevel \n\r");
 
-	//korte test:
-
-//	middleware_init_LCD();
-//	//print_text(3, "MENU");
-//	print_menuName("MENU");
-
-
-
 	init();
-	while(1){
+
+	//testje voor Toplevel:
+	for (uint8_t i = 0; i < BeatArrLengte; i++)
+		tracks[0].beat[i] = (i % 4 == 0) ? true : false;
+
+	tracks[0].geluidjesIndex = 0;
+	tracks[0].active = true;
+
+	while (1) {
 		loop();
 	}
 }

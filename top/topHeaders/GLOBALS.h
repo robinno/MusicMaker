@@ -50,7 +50,7 @@ uint8_t maatIndex = 0;
 
 //STATE track_menu
 #define aantalTrackTiteltjes 5
-#define trackTiteltjes {"Terug", "actief", "Kwantisatie", "Geluidje", "Record ..."}
+char trackTiteltjes[aantalTrackTiteltjes][tekstlengte] = {"Terug", "actief", "Kwantisatie", "Geluidje", "Record ..."};
 uint8_t huidigTrackTiteltje = 0;
 
 //STATE resolutie_inst
