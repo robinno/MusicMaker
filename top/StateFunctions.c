@@ -1,10 +1,25 @@
 #include "topHeaders/StateFunctions.h"
+#include "topHeaders/GLOBALS.h"
+#include "topHeaders/Geluidjes.h"
+
+#include "topHeaders/STATES.h"
 
 //on every beat:
 void playActiveSounds() {
 	for (uint8_t i = 0; i < aantalTracks; i++)
 		if (tracks[i].active && tracks[i].beat[beatIndex])
 			playsound(tracks[i].geluidjesIndex);
+}
+
+void updateBeatIndex(){
+	//update beatIndex
+	beatIndex = beatIndex + BeatArrLengte / (MaatMogelijkheden[maatIndex] * 4);
+	if (beatIndex >= BeatArrLengte)
+		beatIndex = 0;
+}
+
+void printBeatIndexOnLCD(){
+	print_metronome(beatIndex / 4, BeatArrLengte / 4); //Per kwartnoot tonen
 }
 
 //init functions:
@@ -38,9 +53,8 @@ void initStates() {
 	startTimer0BPM(huidigeBPM);
 
 	//INIT TRACKS:
-	for (int i = 0; i < aantalTracks; i++) {
+	for (int i = 0; i < aantalTracks; i++)
 		tracks[i].active = false;
-	}
 
 	//starting state:
 	goto_MENU();
@@ -110,7 +124,6 @@ void goto_RECORDING() {
 	while (beatIndex != 0)
 		; //wacht tot in begin van de maat
 
-	recording = true;
 	for (uint8_t i = 0; i < BeatArrLengte; i++) { //clear current content of track
 		tracks[trackIndex].beat[i] = false;
 	}
@@ -121,7 +134,6 @@ void goto_RECORDING() {
 bool checkIfEindeMaat() {
 	bool einde = beatIndex >= BeatArrLengte - 1;
 	if (einde) {
-		recording = false;
 		setLED(RED, 0);
 	}
 	return einde;

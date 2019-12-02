@@ -1,9 +1,11 @@
+#ifndef STATEFUNCTIONS_H
+#define STATEFUNCTIONS_H
+
+//#include "STATES.h"
+
 #include <stdbool.h>
+#include "fsl_debug_console.h"
 
-#ifndef TOP_TOPHEADERS_STATEFUNCTIONS_H_
-#define TOP_TOPHEADERS_STATEFUNCTIONS_H_
-
-//INCLUDES
 #include "../../middleware/middlewareHeaders/PlaySound.h"
 #include "../../middleware/middlewareHeaders/ReadJoystick.h"
 #include "../../middleware/middlewareHeaders/Timer0.h"
@@ -11,11 +13,11 @@
 #include "../../middleware/middlewareHeaders/WriteDisplay.h"
 #include "../../middleware/middlewareHeaders/WriteLED.h"
 
-#include "GLOBALS.h"
-#include "Geluidjes.h"
 
 //on every beat:
 void playActiveSounds();
+void updateBeatIndex();
+void printBeatIndexOnLCD();
 
 //init functions:
 void initPeripherals(void (*JS_UP_functie)(void), void (*JS_DOWN_functie)(void),
@@ -41,6 +43,5 @@ void TRACK_MENU_state(bool next, bool prev, bool select);
 void RESOLUTIE_INST_state(bool next, bool prev, bool select);
 void GELUID_INST_state(bool next, bool prev, bool select);
 void RECORDING(bool hit);
-
 
 #endif

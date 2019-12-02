@@ -1,8 +1,11 @@
-#include "MK64F12.h"
-#include "fsl_debug_console.h"
+#ifndef TOPLEVEL_H
+#define TOPLEVEL_H
 
+#include <stdbool.h>
+#include <stdint.h>
 
-//INCLUDES
+//#include "STATES.h"
 #include "StateFunctions.h"
 
 void toplevel();
+#endif

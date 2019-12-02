@@ -1,3 +1,6 @@
+#ifndef WRITE_LED_H
+#define WRITE_LED_H
+
 #include "../../drivers/driverHeaders/SetLED.h"
 
 /*
@@ -24,3 +27,5 @@ void initRGB();
 * @return void
 */
 void setLED(RGB color, uint8_t of);
+
+#endif

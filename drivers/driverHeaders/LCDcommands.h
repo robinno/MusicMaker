@@ -1,3 +1,6 @@
+#ifndef LCD_COMM_H
+#define LCD_COMM_H
+
 #include "SPI.h"
 #include <stdint.h>
 
@@ -41,3 +44,5 @@ void display_reset();
  * command for No Operation
  */
 void display_NOP();
+
+#endif

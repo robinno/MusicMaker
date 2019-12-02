@@ -1,3 +1,6 @@
+#ifndef SET_LED_H
+#define SET_LED_H
+
 #include "MK64F12.h"
 
 /*
@@ -44,3 +47,5 @@ void initLED_C(uint8_t ledNr);
 * @return void
 */
 void setLED_C(uint8_t ledNr, uint8_t of);
+
+#endif

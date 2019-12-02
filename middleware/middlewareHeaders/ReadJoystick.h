@@ -1,3 +1,6 @@
+#ifndef READ_JS_H
+#define READ_JS_H
+
 #include "../../drivers/driverHeaders/JoystickInput.h"
 
 
@@ -13,3 +16,5 @@
  * @return zero if succesfull.
  */
 void middleware_initJoyStick(direction dir, void (*fp)(void));
+
+#endif

@@ -32,7 +32,6 @@
  * @file    MUSICMAKER.c
  * @brief   Application entry point.
  */
-#include "top/topHeaders/toplevel.h"
 #include <stdio.h>
 #include "board.h"
 #include "peripherals.h"
@@ -41,7 +40,8 @@
 #include "MK64F12.h"
 #include "fsl_debug_console.h"
 /* TODO: insert other include files here. */
-
+//#include "top/topHeaders/STATES.h"
+#include "top/topHeaders/toplevel.h"
 
 /* TODO: insert other definitions and declarations here. */
 
@@ -57,7 +57,7 @@ int main(void) {
   	/* Init FSL debug console. */
     BOARD_InitDebugConsole();
 
-    PRINTF("Init finished\n");
+    //PRINTF("Init finished\n");
     toplevel();
 
     /* Force the counter to be placed into memory. */

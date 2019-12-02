@@ -1,8 +1,8 @@
-#include <stdint.h>
-#include <stdbool.h>
-
 #ifndef soundHeader
 #define soundHeader
+
+#include <stdint.h>
+#include <stdbool.h>
 
 //this file is for the declaration of the "sound" struct:
 

@@ -1,3 +1,6 @@
+#ifndef SPI_H
+#define SPI_H
+
 #include "MK64F12.h"
 
 /*
@@ -33,3 +36,4 @@ void delay_10ns(int ns10);
 */
 void delay_ms(int ms);
 
+#endif

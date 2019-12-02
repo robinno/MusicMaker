@@ -1,3 +1,6 @@
+#ifndef JS_IN_H
+#define JS_IN_H
+
 #include "MK64F12.h"
 
 /*
@@ -27,3 +30,5 @@ typedef enum
  * @return zero if succesfull.
  */
 int initJoyStick(direction dir, void (*fp)(void));
+
+#endif

@@ -1,11 +1,10 @@
-#include <stdbool.h>
-#include <stdint.h>
 #include "topHeaders/toplevel.h"
 
+#include "topHeaders/STATES.h"
 
-bool PRESSED_DOWN = false;
-bool PRESSED_UP = false;
-bool PRESSED_FIRE = false;
+volatile bool PRESSED_DOWN = false;
+volatile bool PRESSED_UP = false;
+volatile bool PRESSED_FIRE = false;
 
 //////////////////////////
 // INTERRUPT HANDLERS	//
@@ -25,13 +24,8 @@ void knopFire(void) {
 
 void beat(void) { //When the beat timer throws an interrupt
 	playActiveSounds();
-
-	//update beatIndex
-	beatIndex = beatIndex + BeatArrLengte / (MaatMogelijkheden[maatIndex] * 4);
-	if (beatIndex >= BeatArrLengte)
-		beatIndex = 0;
-
-	print_metronome(beatIndex / 4, BeatArrLengte / 4); //Per kwartnoot tonen
+	updateBeatIndex();
+	printBeatIndexOnLCD();
 }
 
 //////////
@@ -83,19 +77,10 @@ void loop() {
 //////////
 
 void toplevel() {
-	//printf("in toplevel \n\r");
-
+	//printf("in toplevel\n");
 	init();
-
-	//testje voor Toplevel:
-	for (uint8_t i = 0; i < BeatArrLengte; i++)
-		tracks[0].beat[i] = (i % 4 == 0) ? true : false;
-
-	tracks[0].geluidjesIndex = 0;
-	tracks[0].active = true;
-
-	while (1) {
+	//printf("init finished\n");
+	while (1)
 		loop();
-	}
 }
 

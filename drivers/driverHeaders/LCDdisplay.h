@@ -1,3 +1,6 @@
+#ifndef LCD_DISP_H
+#define LCD_DISP_H
+
 #include "LCDcommands.h"
 #include "font.h"
 
@@ -35,3 +38,5 @@ void print_line(uint8_t ratio);
 * @return void
 */
 void print_stripe(uint8_t page);
+
+#endif

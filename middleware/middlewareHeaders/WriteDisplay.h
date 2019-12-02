@@ -1,3 +1,6 @@
+#ifndef WRITE_DISPL_H
+#define WRITE_DISPL_H
+
 #include "../../drivers/driverHeaders/LCDdisplay.h"
 #include <string.h>
 
@@ -32,3 +35,5 @@ void print_metronome(uint8_t teller, uint8_t beatsInMaat);
 * @return void
 */
 void print_menuItem(char menuItem[]);
+
+#endif

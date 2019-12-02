@@ -1,24 +1,12 @@
+#ifndef TOP_TOPHEADERS_GLOBALS_H
+#define TOP_TOPHEADERS_GLOBALS_H
+
 #include <stdbool.h>
 #include <stdint.h>
-
-#ifndef TOP_TOPHEADERS_GLOBALS_H_
-#define TOP_TOPHEADERS_GLOBALS_H_
 
 #define aantalTracks 4
 #define tekstlengte 16
 #define BeatArrLengte 48 * 4
-
-//STATEMACHINE variables:
-enum states {
-	MENU,
-	BPM_INST,
-	MAAT_INST,
-	TRACK_MENU,
-	RESOLUTIE_INST,
-	GELUID_INST,
-	REC_PERCUSSIE
-};
-uint8_t state = MENU;
 
 //struct for tracks:
 struct {
@@ -29,7 +17,7 @@ struct {
 } tracks[aantalTracks];
 
 uint8_t trackIndex = 0;
-uint8_t beatIndex = 0;
+volatile uint8_t beatIndex = 0;
 
 //////////////////////
 // STATE variables:	//
@@ -68,8 +56,5 @@ struct kwantisatie {
 #define aantalKwantisatieOpties 3
 struct kwantisatie* kwantisatieOpties[aantalKwantisatieOpties] = {&kwartnoot, &achtstenoot, &zestiendenoot};
 uint8_t kwantisatie_index = 0;
-
-//STATE recording
-bool recording = false;
 
 #endif /* TOP_TOPHEADERS_GLOBALS_H_ */
