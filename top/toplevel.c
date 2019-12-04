@@ -1,7 +1,5 @@
 #include "topHeaders/toplevel.h"
 
-#include "topHeaders/STATES.h"
-
 volatile bool PRESSED_DOWN = false;
 volatile bool PRESSED_UP = false;
 volatile bool PRESSED_FIRE = false;
@@ -43,28 +41,7 @@ void init() {
 
 void loop() {
 	while (true) {
-		switch (state) {
-		case MENU:
-			MENU_state(PRESSED_DOWN, PRESSED_UP, PRESSED_FIRE);
-			break;
-		case BPM_INST:
-			BPM_INST_state(PRESSED_FIRE);
-			break;
-		case MAAT_INST:
-			MAAT_INST_state(PRESSED_DOWN, PRESSED_UP, PRESSED_FIRE);
-			break;
-		case TRACK_MENU:
-			TRACK_MENU_state(PRESSED_DOWN, PRESSED_UP, PRESSED_FIRE);
-			break;
-		case RESOLUTIE_INST:
-			RESOLUTIE_INST_state(PRESSED_DOWN, PRESSED_UP, PRESSED_FIRE);
-			break;
-		case GELUID_INST:
-			GELUID_INST_state(PRESSED_DOWN, PRESSED_UP, PRESSED_FIRE);
-			break;
-		case REC_PERCUSSIE:
-			RECORDING(PRESSED_FIRE);
-		}
+		stateMachine(PRESSED_DOWN, PRESSED_UP, PRESSED_FIRE);
 
 		PRESSED_DOWN = false;
 		PRESSED_UP = false;

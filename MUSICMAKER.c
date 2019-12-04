@@ -40,7 +40,6 @@
 #include "MK64F12.h"
 #include "fsl_debug_console.h"
 /* TODO: insert other include files here. */
-//#include "top/topHeaders/STATES.h"
 #include "top/topHeaders/toplevel.h"
 
 /* TODO: insert other definitions and declarations here. */

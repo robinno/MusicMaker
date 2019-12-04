@@ -2,8 +2,6 @@
 #include "topHeaders/GLOBALS.h"
 #include "topHeaders/Geluidjes.h"
 
-#include "topHeaders/STATES.h"
-
 //on every beat:
 void playActiveSounds() {
 	for (uint8_t i = 0; i < aantalTracks; i++)
@@ -67,13 +65,13 @@ void initStates() {
 /////////////////////////////
 
 void goto_MENU() {
-	state = MENU;
+	huidigeState = MENU;
 	print_menuName("MENU");
 	print_menuItem(menu.titeltjes[menu.index]);
 }
 
 void goto_BPM_INST() {
-	state = BPM_INST;
+	huidigeState = BPM_INST;
 	print_menuName("BPM INSTELLEN");
 }
 
@@ -86,7 +84,7 @@ void goto_MAAT_INST() {
 		}
 	}
 
-	state = MAAT_INST;
+	huidigeState = MAAT_INST;
 	print_menuName("MAAT INSTELLEN");
 	char maatTekst[16];
 	sprintf(maatTekst, "maat = %i/4", MaatMogelijkheden[maatIndex]);
@@ -94,7 +92,7 @@ void goto_MAAT_INST() {
 }
 
 void goto_TRACK_MENU() {
-	state = TRACK_MENU;
+	huidigeState = TRACK_MENU;
 	trackIndex = menu.index - 2;
 
 	char trackMenuNaam[tekstlengte];
@@ -105,19 +103,19 @@ void goto_TRACK_MENU() {
 }
 
 void goto_RESOLUTIE_INST() {
-	state = RESOLUTIE_INST;
+	huidigeState = RESOLUTIE_INST;
 	print_menuName("RESOLUTIE");
 	print_menuItem(kwantisatieOpties[kwantisatie_index]->naam);
 }
 
 void goto_GELUID_INST() {
-	state = GELUID_INST;
+	huidigeState = GELUID_INST;
 	print_menuName("GELUID");
 	print_menuItem(geluidjes[tracks[trackIndex].geluidjesIndex]->name);
 }
 
 void goto_RECORDING() {
-	state = REC_PERCUSSIE;
+	huidigeState = REC_PERCUSSIE;
 	print_menuName("RECORDING");
 	print_menuItem("wait ...");
 
@@ -290,6 +288,7 @@ void GELUID_INST_state(bool next, bool prev, bool select) {
 	geluidjes[tracks[trackIndex].geluidjesIndex]->active = true;
 	tracks[trackIndex].active = true;
 }
+
 void RECORDING(bool hit) {
 	if (hit) {
 		//choose closest beat
@@ -314,4 +313,30 @@ void RECORDING(bool hit) {
 
 	if (checkIfEindeMaat())
 		goto_TRACK_MENU();
+}
+
+//STATE MACHINE ITSELF
+void stateMachine(bool next, bool prev, bool select){
+	switch (huidigeState) {
+			case MENU:
+				MENU_state(next, prev, select);
+				break;
+			case BPM_INST:
+				BPM_INST_state(select);
+				break;
+			case MAAT_INST:
+				MAAT_INST_state(next, prev, select);
+				break;
+			case TRACK_MENU:
+				TRACK_MENU_state(next, prev, select);
+				break;
+			case RESOLUTIE_INST:
+				RESOLUTIE_INST_state(next, prev, select);
+				break;
+			case GELUID_INST:
+				GELUID_INST_state(next, prev, select);
+				break;
+			case REC_PERCUSSIE:
+				RECORDING(select);
+			}
 }
