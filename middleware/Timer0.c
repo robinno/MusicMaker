@@ -9,8 +9,8 @@ void startTimer0(uint32_t microseconds){
 }
 
 void startTimer0BPM(uint8_t bpm){
-	float freq = bpm / 60; //de frequentie van de timer die nodig is
-	float period = 1 / freq;
+	double freq = (((double) bpm) / 60) * 4; //de frequentie van de timer die nodig is (maal 4 want per zestiende noot ipv kwartnoot)
+	double period = 1 / freq;
 	uint32_t microseconds = (uint32_t) (period * 1000000);
 
 	startTimer0(microseconds);

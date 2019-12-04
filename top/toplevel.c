@@ -1,8 +1,16 @@
 #include "topHeaders/toplevel.h"
 
-volatile bool PRESSED_DOWN = false;
-volatile bool PRESSED_UP = false;
-volatile bool PRESSED_FIRE = false;
+bool PRESSED_DOWN = false;
+bool PRESSED_UP = false;
+bool PRESSED_FIRE = false;
+
+
+#define state_refresh_rate_ms 5
+//delay function
+void delay_to_refresh(){
+	for(long i = 0; i < 1700 * state_refresh_rate_ms; i++);
+}
+
 
 //////////////////////////
 // INTERRUPT HANDLERS	//
@@ -41,6 +49,8 @@ void init() {
 
 void loop() {
 	while (true) {
+		delay_to_refresh();
+
 		stateMachine(PRESSED_DOWN, PRESSED_UP, PRESSED_FIRE);
 
 		PRESSED_DOWN = false;

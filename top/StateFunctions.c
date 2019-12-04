@@ -14,6 +14,10 @@ enum states {
 	REC_PERCUSSIE
 } huidigeState = MENU;
 
+//ANDERE GLOBALS
+bool recording = false;
+uint8_t bpm_teller = 0;
+
 //on every beat:
 void playActiveSounds() {
 	for (uint8_t i = 0; i < aantalTracks; i++)
@@ -22,14 +26,21 @@ void playActiveSounds() {
 }
 
 void updateBeatIndex(){
-	//update beatIndex
 	beatIndex = beatIndex + BeatArrLengte / (MaatMogelijkheden[maatIndex] * 4);
-	if (beatIndex >= BeatArrLengte)
+	if (beatIndex >= BeatArrLengte){
 		beatIndex = 0;
+		if(recording == true)
+			recording = false;
+	}
 }
 
 void printBeatIndexOnLCD(){
-	print_metronome(beatIndex / 4, BeatArrLengte / 4); //Per kwartnoot tonen
+	//only update metronome every 4 beats: (per kwartnoot tonen)
+	bpm_teller++;
+	if(bpm_teller == 4){
+		print_metronome(beatIndex, BeatArrLengte);
+		bpm_teller = 0;
+	}
 }
 
 //init functions:
@@ -139,10 +150,11 @@ void goto_RECORDING() {
 	}
 	setLED(RED, 1);
 	print_menuItem("recording ...");
+	recording = true;
 }
 
 bool checkIfEindeMaat() {
-	bool einde = beatIndex >= BeatArrLengte - 1;
+	bool einde = (beatIndex >= BeatArrLengte - 1);
 	if (einde) {
 		setLED(RED, 0);
 	}
@@ -183,6 +195,9 @@ void MENU_state(bool next, bool prev, bool select) {
 }
 
 void BPM_INST_state(bool select) {
+	//reset maat
+	beatIndex = 0;
+
 	huidigeBPM = readPot();
 
 	char bpmTekst[16];
@@ -190,12 +205,15 @@ void BPM_INST_state(bool select) {
 	print_menuItem(bpmTekst);
 
 	if (select) {
-		startTimer0BPM(huidigeBPM); //delen door 4 want BPM is voor kwartnoot, en beat is op 16e noot
+		startTimer0BPM(huidigeBPM);
 		goto_MENU();
 	}
 }
 
 void MAAT_INST_state(bool next, bool prev, bool select) {
+	//reset maat
+	beatIndex = 0;
+
 	//update index
 	if (next)
 		maatIndex = (maatIndex + 1) % aantalMaatSoorten;
@@ -308,22 +326,24 @@ void RECORDING(bool hit) {
 				(timer0Value() < 0.5) ?
 						beatIndex : (beatIndex + 1) % BeatArrLengte;
 
-		//perform quantization:
-		uint8_t deler = kwantisatieOpties[kwantisatie_index]->perAantalBeats;
-		uint8_t middenVanInterval = (beatIndex / deler) * deler + (deler / 2);
+//		//perform quantization:
+//		uint8_t deler = kwantisatieOpties[kwantisatie_index]->perAantalBeats;
+//		uint8_t middenVanInterval = (beatIndex / deler) * deler + (deler / 2);
+//
+//		uint8_t naKwantisatie = 0;
+//		if (rechtGetrokkenVoorKwantisatie <= middenVanInterval) {
+//			naKwantisatie = (beatIndex / deler) * deler;
+//		} else {
+//			naKwantisatie = ((beatIndex / deler + 1) * deler) % BeatArrLengte;
+//		}
+//
+//		//toekennen aan beat array voor die track
+//		tracks[trackIndex].beat[naKwantisatie] = true;
 
-		uint8_t naKwantisatie = 0;
-		if (rechtGetrokkenVoorKwantisatie <= middenVanInterval) {
-			naKwantisatie = (beatIndex / deler) * deler;
-		} else {
-			naKwantisatie = ((beatIndex / deler + 1) * deler) % BeatArrLengte;
-		}
-
-		//toekennen aan beat array voor die track
-		tracks[trackIndex].beat[naKwantisatie] = true;
+		tracks[trackIndex].beat[rechtGetrokkenVoorKwantisatie] = true;
 	}
 
-	if (checkIfEindeMaat())
+	if (recording == false)
 		goto_TRACK_MENU();
 }
 
