@@ -2,6 +2,18 @@
 #include "topHeaders/GLOBALS.h"
 #include "topHeaders/Geluidjes.h"
 
+//STATEMACHINE VARIABLES
+//werkte niet in de .h files, dus alles moest in deze file. (Ik heb mr. Espeel geraadpleegd)
+enum states {
+	MENU,
+	BPM_INST,
+	MAAT_INST,
+	TRACK_MENU,
+	RESOLUTIE_INST,
+	GELUID_INST,
+	REC_PERCUSSIE
+} huidigeState = MENU;
+
 //on every beat:
 void playActiveSounds() {
 	for (uint8_t i = 0; i < aantalTracks; i++)

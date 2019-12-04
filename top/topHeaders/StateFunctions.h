@@ -12,20 +12,6 @@
 #include "../../middleware/middlewareHeaders/WriteDisplay.h"
 #include "../../middleware/middlewareHeaders/WriteLED.h"
 
-//STATEMACHINE variables:
-enum states {
-	MENU,
-	BPM_INST,
-	MAAT_INST,
-	TRACK_MENU,
-	RESOLUTIE_INST,
-	GELUID_INST,
-	REC_PERCUSSIE
-} huidigeState = MENU;
-
-uint8_t test = 0;
-int hallo = 0;
-int test2;
 
 //on every beat:
 void playActiveSounds();
