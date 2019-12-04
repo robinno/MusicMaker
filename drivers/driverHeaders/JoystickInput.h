@@ -2,6 +2,7 @@
 #define JS_IN_H
 
 #include "MK64F12.h"
+#include <stdint.h>
 
 /*
  * Enum that represents the direction of the joystick pins.

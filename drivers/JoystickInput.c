@@ -1,5 +1,10 @@
 #include "driverHeaders/JoystickInput.h"
 
+void wacht(uint32_t ms) {
+	for (long i = 0; i < (1700 * ms); i++) {
+	} //timed measurements
+}
+
 void (*up)(void);
 void (*down)(void);
 void (*left)(void);
@@ -68,6 +73,7 @@ void PORTB_IRQHandler(void) {
 		default:
 			printf("interrupt not recognized.\n");
 	}
+//	wacht(100);//20ms busy waiting for debouncing purposes
 	PORTB->ISFR &= ~0; //reset all interrupts on PORTB by writing a '1'.
 }
 
@@ -85,6 +91,8 @@ void PORTC_IRQHandler(void) {
 		default:
 			printf("interrupt not recognized.\n");
 	}
+//	wacht(100);//20ms busy waiting for debouncing purposes
 	PORTC->ISFR &= ~0; //reset all interrupts on PORTC by writing a '1'.
 }
+
 
