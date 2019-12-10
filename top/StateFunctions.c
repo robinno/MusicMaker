@@ -74,8 +74,10 @@ void initStates() {
 	startTimer0BPM(huidigeBPM);
 
 	//INIT TRACKS:
-	for (int i = 0; i < aantalTracks; i++)
+	for (int i = 0; i < aantalTracks; i++){
 		tracks[i].active = false;
+		tracks[i].geluidjesIndex = i;
+	}
 
 	//starting state:
 	goto_MENU();
@@ -326,21 +328,21 @@ void RECORDING(bool hit) {
 				(timer0Value() < 0.5) ?
 						beatIndex : (beatIndex + 1) % BeatArrLengte;
 
-//		//perform quantization:
-//		uint8_t deler = kwantisatieOpties[kwantisatie_index]->perAantalBeats;
-//		uint8_t middenVanInterval = (beatIndex / deler) * deler + (deler / 2);
-//
-//		uint8_t naKwantisatie = 0;
-//		if (rechtGetrokkenVoorKwantisatie <= middenVanInterval) {
-//			naKwantisatie = (beatIndex / deler) * deler;
-//		} else {
-//			naKwantisatie = ((beatIndex / deler + 1) * deler) % BeatArrLengte;
-//		}
-//
-//		//toekennen aan beat array voor die track
-//		tracks[trackIndex].beat[naKwantisatie] = true;
+		//perform quantization:
+		uint8_t deler = kwantisatieOpties[kwantisatie_index]->perAantalBeats;
+		uint8_t middenVanInterval = (beatIndex / deler) * deler + (deler / 2);
 
-		tracks[trackIndex].beat[rechtGetrokkenVoorKwantisatie] = true;
+		uint8_t naKwantisatie = 0;
+		if (rechtGetrokkenVoorKwantisatie <= middenVanInterval) {
+			naKwantisatie = (beatIndex / deler) * deler;
+		} else {
+			naKwantisatie = ((beatIndex / deler + 1) * deler) % BeatArrLengte;
+		}
+
+		//toekennen aan beat array voor die track
+		tracks[trackIndex].beat[naKwantisatie] = true;
+
+		//tracks[trackIndex].beat[naKwantisatie] = true;
 	}
 
 	if (recording == false)

@@ -4,13 +4,13 @@ bool PRESSED_DOWN = false;
 bool PRESSED_UP = false;
 bool PRESSED_FIRE = false;
 
+#define state_refresh_rate_ms 20
 
-#define state_refresh_rate_ms 5
 //delay function
-void delay_to_refresh(){
-	for(long i = 0; i < 1700 * state_refresh_rate_ms; i++);
+void delay_to_refresh() {
+	for (long i = 0; i < 1700 * state_refresh_rate_ms; i++)
+		;
 }
-
 
 //////////////////////////
 // INTERRUPT HANDLERS	//
@@ -64,6 +64,7 @@ void loop() {
 //////////
 
 void toplevel() {
+
 	//printf("in toplevel\n");
 	init();
 	//printf("init finished\n");

@@ -73,7 +73,7 @@ void PORTB_IRQHandler(void) {
 		default:
 			printf("interrupt not recognized.\n");
 	}
-//	wacht(100);//20ms busy waiting for debouncing purposes
+	wacht(5);//5ms busy waiting for debouncing purposes
 	PORTB->ISFR &= ~0; //reset all interrupts on PORTB by writing a '1'.
 }
 
@@ -91,7 +91,7 @@ void PORTC_IRQHandler(void) {
 		default:
 			printf("interrupt not recognized.\n");
 	}
-//	wacht(100);//20ms busy waiting for debouncing purposes
+	wacht(5);//5ms busy waiting for debouncing purposes
 	PORTC->ISFR &= ~0; //reset all interrupts on PORTC by writing a '1'.
 }
 

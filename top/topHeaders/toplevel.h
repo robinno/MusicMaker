@@ -6,5 +6,8 @@
 
 #include "StateFunctions.h"
 
+/**
+ * to be called when starting the application.
+ */
 void toplevel();
 #endif
